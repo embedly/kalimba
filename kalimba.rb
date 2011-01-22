@@ -21,9 +21,17 @@ Camping.goes :Kalimba
 
 module Kalimba::Models
   class Article < Base
+    def self.normalize_url link
+      if link !~ /^http/
+        "http://news.ycombinator.com/#{link}"
+      else
+        link
+      end
+    end
   end
 
   class Preview < Base
+
     def self._key url
       Digest::SHA1.hexdigest(url)
     end
@@ -95,8 +103,9 @@ module Kalimba::Controllers
     def get
       @articles = []
       Article::find(:all, :order => 'id').each do |a|
-        preview = Preview.find_preview(a.link).value
-        @articles << [a, OpenStruct.new(JSON.parse(preview))]
+        preview_row = Preview.find_preview(Article.normalize_url(a.link))
+        preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
+        @articles << [a, preview]
       end
 
       render :list_articles
@@ -115,14 +124,18 @@ module Kalimba::Controllers
           :rank => article.at('.title').inner_html,
           :title => article.at('.title/a').inner_html,
           :link => article.at('.title/a')[:href],
-          :comments => "http://news.ycombinator.com/#{subtext.at('a:last')[:href]}"
+          :comments => Article.normalize_url(subtext.at('a:last')[:href])
         }
       end
 
-      urls = articles.collect {|a| a[:link]}.reject {|a| Preview.key_exists? a}
-      api = ::Embedly::API.new :key => '409326e2259411e088ae4040f9f86dcd'
-      api.preview(:urls => urls).each_with_index do |preview, i|
-        Preview.save_preview urls[i], preview
+
+      urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
+      puts urls
+      if urls.size > 0
+        api = ::Embedly::API.new :key => '409326e2259411e088ae4040f9f86dcd'
+        api.preview(:urls => urls).each_with_index do |preview, i|
+          Preview.save_preview urls[i], preview
+        end
       end
 
       Article.create articles
@@ -190,7 +203,7 @@ module Kalimba::Views
           div do
     #        h1 'preview'
     #        pre(JSON.pretty_generate(preview.marshal_dump))
-            _embed(preview)
+            _embed(preview) if preview
           end
         end
       end

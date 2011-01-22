@@ -11,6 +11,16 @@ module Kalimba::Controllers
 end
 
 module Kalimba::Views
+  def layout
+    html do
+      head do
+        title { "Kalimba - Rose Colored Glasses for Hacker News" }
+      end
+
+      body { self << yield }
+    end
+  end
+
   def hello
     p "Hello World!"
   end

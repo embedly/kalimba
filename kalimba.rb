@@ -79,7 +79,7 @@ module Kalimba::Models
 
       create_table Preview.table_name do |t|
         t.string :key
-        t.string :value
+        t.text :value
         t.timestamps
       end
     end

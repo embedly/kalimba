@@ -1,6 +1,6 @@
 require 'camping'
 
-Camping.goes :Hello
+Camping.goes :Kalimba
 
 module Kalimba::Controllers
   class Index < R '/'
@@ -11,7 +11,7 @@ module Kalimba::Controllers
 end
 
 module Kalimba::Views
-  def kalimba
+  def hello
     p "Hello World!"
   end
 end

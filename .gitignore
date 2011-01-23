@@ -1,3 +1,4 @@
 development.sqlite3
 .sass-cache/
-static/css/*.css
+# we have to check in css since we can't create files on heroku
+#static/css/*.css

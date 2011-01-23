@@ -1,0 +1,26 @@
+.embedly {
+  display: none;
+  margin: 5px;
+  margin-bottom: 13px;
+  padding: 5px;
+  border: solid 1px #cccccc;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  box-shadow: 6px 6px 8px #333333;
+  -moz-box-shadow: 6px 6px 8px #333333;
+  -webkit-box-shadow: 6px 6px 8px #333333; }
+  .embedly img {
+    float: left;
+    margin: 10px; }
+  .embedly a:hover {
+    text-decoration: underline; }
+  .embedly .embedly_title {
+    font-weight: bold;
+    font-size: 2em;
+    line-height: 1.1em;
+    margin-bottom: 0.5em;
+    text-decoration: none; }
+
+.clear {
+  clear: both; }

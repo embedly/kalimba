@@ -1,0 +1,38 @@
+$border-color: #cccccc
+$shadow-color: #333333
+
+=radius($r)
+  border-radius: $r
+  -moz-border-radius: $r
+  -webkit-border-radius: $r
+
+=shadow
+  box-shadow: 6px 6px 8px $shadow-color
+  -moz-box-shadow: 6px 6px 8px $shadow-color
+  -webkit-box-shadow: 6px 6px 8px $shadow-color
+
+.embedly
+  display: none
+  margin: 5px
+  margin-bottom: 13px
+  padding: 5px
+  border: solid 1px $border-color
+  +radius(8px)
+  +shadow
+
+  img
+    float: left
+    margin: 10px
+
+  a:hover
+    text-decoration: underline
+
+  .embedly_title
+    font-weight: bold
+    font-size: 2em
+    line-height: 1.1em
+    margin-bottom: 0.5em
+    text-decoration: none
+
+.clear
+  clear: both

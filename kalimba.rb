@@ -5,6 +5,7 @@ require 'hpricot'
 require 'json'
 require 'digest/sha1'
 require 'ostruct'
+require 'sass'
 
 # PUNK
 class OpenStruct
@@ -130,7 +131,6 @@ module Kalimba::Controllers
 
 
       urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
-      puts urls
       if urls.size > 0
         api = ::Embedly::API.new :key => '409326e2259411e088ae4040f9f86dcd'
         api.preview(:urls => urls).each_with_index do |preview, i|
@@ -142,26 +142,6 @@ module Kalimba::Controllers
 
 
       redirect R(Index)
-=begin
-      topic = @input.topic
-      open(topic) do |s|
-        RSS::Parser.parse(s.read).items.each_with_index do |item, i|
-          Article.create(
-            :rank => i,
-            :title => item.title,
-            :link => item.link,
-            :comments => item.comments
-          )
-        end
-      end
-=end
-    end
-  end
-
-  class Stylesheet < R '/css/main.css'
-    def get
-      @headers['Content-Type'] = 'text/css'
-      File.read(__FILE__).gsub(/.*__END__/m, '')
     end
   end
 end
@@ -171,7 +151,7 @@ module Kalimba::Views
     html do
       head do
         title { "Kalimba - Rose Colored Glasses for Hacker News" }
-        link :href => R(Stylesheet), :type => 'text/css', :rel => 'stylesheet'
+        link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
         script do
           self <<<<-'SCRIPT'
@@ -179,7 +159,7 @@ module Kalimba::Views
             $('.embedly_toggle').each(function() {
               var self = $(this);
               self.find('.toggle_button').click(function() {
-                self.find('.embedly').toggle();
+                self.find('.embedly').toggle('fast');
                 return false;
               });
             });
@@ -233,8 +213,8 @@ module Kalimba::Views
       if preview.content
         span.embedly_title do
           a preview.title, :target => '_blank', :href => preview.url
-          p { preview.content }
         end
+        p { preview.content }
       else
         case preview.object['type']
         when 'photo'
@@ -245,6 +225,9 @@ module Kalimba::Views
           div { preview.object['html'] }
         else
           if preview.type == 'html'
+            a.embedly_title preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+            div.clear
+
             if preview.images.length != 0
               if preview.images.first['width'] >= 450
                 a.embedly_thumbnail :target => '_blank', :href => preview.original_url, :title => preview.url do
@@ -257,9 +240,9 @@ module Kalimba::Views
               end
             end
 
-            a.embedly_title preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
             p preview.description
 
+            div.clear
             div { preview.embeds.first['html'] if preview.embeds.length > 0 }
           end
         end
@@ -271,6 +254,7 @@ module Kalimba::Views
     div.embedly_toggle do
       a.toggle_button 'click me', :href => '#'
       div.embedly { _content preview }
+      div.clear
     end
   end
 end
@@ -279,6 +263,3 @@ def Kalimba.create
   #Camping::Models::Session.create_schema
   Kalimba::Models.create_schema
 end
-
-__END__
-.embedly { display: none; }

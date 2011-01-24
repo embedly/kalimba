@@ -1,3 +1,38 @@
+html {
+  -webkit-font-smoothing: antialiased; }
+
+body {
+  font: 13px sans-serif;
+  *font-size: small;
+  *font: x-small;
+  line-height: 1.22; }
+
+pre, code, kbd, samp {
+  font-family: monospace, sans-serif; }
+
+body, select, input, textarea {
+  color: #444444; }
+
+body {
+  font-family: "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif; }
+
+a {
+  color: black;
+  text-decoration: none;
+  font-size: 10pt; }
+
+a.article_link {
+  font-size: 14pt; }
+
+span.article_rank {
+  font-size: 14pt; }
+
+.main {
+  background: #f6f6ef;
+  margin-left: 60px;
+  margin-right: 60px;
+  padding: 30px; }
+
 .embedly {
   display: none;
   margin: 5px;
@@ -19,7 +54,7 @@
     font-weight: bold;
     font-size: 2em;
     line-height: 1.1em;
-    margin-bottom: 0.5em;
+    margin-bottom: 1.5em;
     text-decoration: none; }
 
 .clear {

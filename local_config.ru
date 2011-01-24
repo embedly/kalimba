@@ -17,4 +17,5 @@ Kalimba.create
 # start
 use Sass::Plugin::Rack
 use Rack::Static, :urls => ["/static"]
+use Rack::Reloader
 run Kalimba

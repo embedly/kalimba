@@ -151,6 +151,7 @@ module Kalimba::Views
     html do
       head do
         title { "Kalimba - Rose Colored Glasses for Hacker News" }
+        link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
         script do
@@ -168,7 +169,9 @@ module Kalimba::Views
         end
       end
 
-      body { self << yield }
+      body do
+        div.main { self << yield }
+      end
     end
   end
 
@@ -176,10 +179,10 @@ module Kalimba::Views
     ul.article_list do
       @articles.each do |article, preview|
         li.article do
-          self << "Rank: #{article.rank} "
-          a.article_link article.title, :href => article.link
+          span.article_rank "#{article.rank}. "
+          a.article_link article.title, :href => article.link, :target => '_blank'
           br
-          a.comment_link 'Comments', :href => article.comments
+          a.comment_link 'Comments', :href => article.comments, :target => '_blank'
           div do
     #        h1 'preview'
     #        pre(JSON.pretty_generate(preview.marshal_dump))
@@ -187,14 +190,6 @@ module Kalimba::Views
           end
         end
       end
-    end
-  end
-
-  def article
-    ul do
-      li @article.title
-      li @article.url
-      li @article.author
     end
   end
 

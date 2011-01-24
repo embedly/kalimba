@@ -1,38 +1,76 @@
 $border-color: #cccccc
 $shadow-color: #333333
+$color: #444444
+$background-color: #f6f6ef
+$link-color: #000000
 
 =radius($r)
-  border-radius: $r
-  -moz-border-radius: $r
-  -webkit-border-radius: $r
+  :border-radius $r
+  :-moz-border-radius $r
+  :-webkit-border-radius $r
 
 =shadow
-  box-shadow: 6px 6px 8px $shadow-color
-  -moz-box-shadow: 6px 6px 8px $shadow-color
-  -webkit-box-shadow: 6px 6px 8px $shadow-color
+  :box-shadow 6px 6px 8px $shadow-color
+  :-moz-box-shadow 6px 6px 8px $shadow-color
+  :-webkit-box-shadow 6px 6px 8px $shadow-color
+
+html
+  :-webkit-font-smoothing antialiased
+
+body
+  :font 13px sans-serif
+  :*font-size small
+  :*font x-small
+  :line-height 1.22
+
+pre, code, kbd, samp
+  :font-family monospace, sans-serif
+
+body, select, input, textarea
+  :color $color
+
+body
+  :font-family "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif
+
+a
+  :color $link-color
+  :text-decoration none
+  :font-size 10pt
+
+a.article_link
+  :font-size 14pt
+
+span.article_rank
+  :font-size 14pt
+
+.main
+  :background $background-color
+  :margin-left 60px
+  :margin-right 60px
+  :padding 30px
 
 .embedly
-  display: none
-  margin: 5px
-  margin-bottom: 13px
-  padding: 5px
-  border: solid 1px $border-color
+  :display none
+  :margin 5px
+  :margin-bottom 13px
+  :padding 5px
+  :border solid 1px $border-color
   +radius(8px)
   +shadow
 
   img
-    float: left
-    margin: 10px
+    :float left
+    :margin 10px
 
   a:hover
-    text-decoration: underline
+    :text-decoration underline
 
   .embedly_title
-    font-weight: bold
-    font-size: 2em
-    line-height: 1.1em
-    margin-bottom: 0.5em
-    text-decoration: none
+    :font-weight bold
+    :font-size 2em
+    :line-height 1.1em
+    :margin-bottom 1.5em
+    :text-decoration none
 
 .clear
-  clear: both
+  :clear both

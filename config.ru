@@ -12,7 +12,6 @@ if environment == 'development'
     :always_check => true
   )
   use Sass::Plugin::Rack
-  use Rack::Reloader
 end
 dbconfig = YAML.load(File.read('config/database.yml'))
 Kalimba::Models::Base.establish_connection dbconfig[environment]

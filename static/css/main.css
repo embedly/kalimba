@@ -13,6 +13,21 @@ pre, code, kbd, samp {
 body, select, input, textarea {
   color: #444444; }
 
+.header {
+  background: black;
+  color: white;
+  width: 700px;
+  padding: 0px 30px;
+  font-family: "Lucida Grande", "Trebuchet MS", Trebuchet, Helvetica, Arial, sans-serif;
+  margin-left: auto;
+  margin-right: auto; }
+  .header .title {
+    background: transparent url("http://static.embed.ly/images/kalimba/orange-logo.png") no-repeat center left;
+    padding: 11px;
+    padding-left: 35px;
+    vertical-align: middle;
+    font-size: 20px; }
+
 .main {
   line-height: 14px;
   font-size: 11px;
@@ -44,6 +59,9 @@ body, select, input, textarea {
     padding-right: 20px; }
     .main div.article_meta a {
       font-weight: normal; }
+  .main div.like {
+    float: right;
+    width: 150px; }
   .main .embedly {
     overflow: auto;
     overflow-y: auto;
@@ -68,6 +86,9 @@ body, select, input, textarea {
         line-height: 1.1em; }
     .main .embedly .embedly_content p {
       margin-bottom: 10px; }
+    .main .embedly .embedly_content ul {
+      margin-bottom: 0px;
+      padding-bottom: 0px; }
     .main .embedly .embedly_content li {
       margin: 13px; }
     .main .embedly .embedly_content img {

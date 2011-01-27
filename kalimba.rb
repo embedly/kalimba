@@ -177,11 +177,34 @@ module Kalimba::Views
         title { "Kalimba - Rose Colored Glasses for Hacker News" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
+        link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
+        script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
+        script do
+          self <<<<-'END'
+            jQuery(document).ready(function($) {
+              SHR4P_init();
+              $('.shr').shareaholic_publishers({
+                mode: 'inject',
+                service: '202,7,5,40,2,52,3',
+                apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
+                link: 'http://kalimba.embed.ly',
+                short_link: 'http://bit.ly/ecDrFU',
+                title: 'Embedly Kalimba - Rose Colored Glasses for Hacker News',
+                center: true
+              });
+            });
+          END
+        end
       end
 
       body do
-        div.main { self << yield }
+        div.header do
+          div.title 'KALIMBA - Rose Colored Glasses for Hacker News'
+        end
+        div.main do
+          self << yield
+        end
       end
     end
   end
@@ -214,6 +237,9 @@ module Kalimba::Views
         end
       end
     end
+    div.like {'<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fkalimba.embed.ly&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe>'}
+    div.clear {}
+    div.shr {}
   end
 
   # Too complicated

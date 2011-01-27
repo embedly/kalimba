@@ -32,6 +32,22 @@ pre, code, kbd, samp
 body, select, input, textarea
   :color $color
 
+.header
+  :background black
+  :color white
+  :width $main-width
+  :padding 0px 30px
+  :font-family 'Lucida Grande', 'Trebuchet MS', Trebuchet, Helvetica, Arial, sans-serif
+  :margin
+    :left auto
+    :right auto
+  .title
+    :background transparent url('http://static.embed.ly/images/kalimba/orange-logo.png') no-repeat center left
+    :padding 11px
+    :padding-left 35px
+    :vertical-align middle
+    :font-size 20px
+
 .main
   :line-height 14px
   :font-size 11px
@@ -71,6 +87,10 @@ body, select, input, textarea
       :font-weight normal
 
 
+  div.like
+    :float right
+    :width 150px
+
   .embedly
     :overflow auto
     :overflow-y auto
@@ -94,6 +114,10 @@ body, select, input, textarea
     .embedly_content
       p
         :margin-bottom 10px
+
+      ul
+        :margin-bottom 0px
+        :padding-bottom 0px
 
       li
         :margin 13px

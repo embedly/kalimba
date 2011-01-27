@@ -208,6 +208,7 @@ module Kalimba::Views
               var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
          END
+        end
       end
 
       body do

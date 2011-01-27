@@ -31,7 +31,7 @@ module Kalimba::Models
     end
 
     def author_link
-      Article.normalize_url("/user?id=#{self.author}")
+      Article.normalize_url("user?id=#{self.author}")
     end
   end
 
@@ -204,7 +204,7 @@ module Kalimba::Views
             div.article_meta do
               self << "#{article.points} points by "
               a.author_link article.author,
-                :href => article.author_link
+                :href => article.author_link, :target => '_blank'
               self << " | "
               a.comment_link "#{article.comment_count} comments",
                 :href => article.comments, :target => '_blank'

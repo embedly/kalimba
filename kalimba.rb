@@ -29,6 +29,10 @@ module Kalimba::Models
         link
       end
     end
+
+    def author_link
+      Article.normalize_url("/user?id=#{self.author}")
+    end
   end
 
   class Preview < Base
@@ -95,6 +99,23 @@ module Kalimba::Models
 
     def self.down
       drop_table Article.table_name
+      drop_table Preview.table_name
+    end
+  end
+
+  class AddMeta < V 0.2
+    def self.up
+      change_table Article.table_name do |t|
+        t.integer :comment_count
+        t.string :author
+        t.integer :points
+      end
+    end
+
+    def self.down
+      remove_column Article.table_name, :comment_count
+      remove_column Article.table_name, :author
+      remove_column Article.table_name, :points
     end
   end
 end
@@ -122,10 +143,13 @@ module Kalimba::Controllers
       (doc/'.subtext/..').each do |subtext|
         article = subtext.previous_node
         articles << {
-          :rank => article.at('.title').inner_html,
-          :title => article.at('.title/a').inner_html,
+          :rank => article.at('.title').inner_html.strip,
+          :title => article.at('.title/a').inner_html.strip,
           :link => article.at('.title/a')[:href],
-          :comments => Article.normalize_url(subtext.at('a:last')[:href])
+          :comments => Article.normalize_url(subtext.at('a:last')[:href]),
+          :comment_count => subtext.at('a:last').inner_html[/\d+/].to_i,
+          :author => subtext.at('a').inner_html.strip,
+          :points => subtext.at('span').inner_html[/\d+/].to_i
         }
       end
 
@@ -133,7 +157,7 @@ module Kalimba::Controllers
       urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
       if urls.size > 0
         api = ::Embedly::API.new :key => '409326e2259411e088ae4040f9f86dcd'
-        api.preview(:urls => urls).each_with_index do |preview, i|
+        api.preview(:urls => urls, :maxwidth => 200).each_with_index do |preview, i|
           Preview.save_preview urls[i], preview
         end
       end
@@ -168,13 +192,22 @@ module Kalimba::Views
         li.article do
           div.article_rank { "#{article.rank}" }
           div.article_content do
-            if preview
+            if preview and preview.title and preview.title.strip != ''
               _embed(preview)
             else
-              a.article_link article.title, :href => article.link, :target => '_blank'
+              div.embedly do
+                div.embedly_title do
+                  a.article_link article.title, :href => article.link, :target => '_blank'
+                end
+              end
             end
             div.article_meta do
-              a.comment_link 'Comments', :href => article.comments, :target => '_blank'
+              self << "#{article.points} points by "
+              a.author_link article.author,
+                :href => article.author_link
+              self << " | "
+              a.comment_link "#{article.comment_count} comments",
+                :href => article.comments, :target => '_blank'
             end
           end
           div.clear {}
@@ -188,7 +221,7 @@ module Kalimba::Views
     case preview.type
     when 'image'
       a.embedly_thumbnail(:href => preview.original_url) do
-        img :src => preview.url
+        img.thumbnail :src => preview.url
       end
     when 'video'
       video.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
@@ -196,35 +229,35 @@ module Kalimba::Views
       audio.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
     else
       if preview.content
-        span.embedly_title do
+        div.embedly_title do
           a preview.title, :target => '_blank', :href => preview.url
         end
-        p { preview.content }
+        div.embedly_content do
+          p { preview.content }
+        end
       else
         case preview.object['type']
         when 'photo'
-          a.embedly_thumbnail :href => preview.original_url do
-            img :src => preview.object_url
+          div.embedly_content do
+            a.embedly_thumbnail :href => preview.original_url do
+              img.thumbnail :src => preview.object_url
+            end
           end
         when 'video', 'rich'
-          div { preview.object['html'] }
+          div.embedly_content { preview.object['html'] }
         else
-          if preview.type == 'html'
-            a.embedly_title preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+          div.embedly_title do
+            a preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+          end
 
+          div.embedly_content do
             if preview.images.length != 0
-              if preview.images.first['width'] >= 500
-                a.embedly_thumbnail :target => '_blank', :href => preview.original_url, :title => preview.url do
-                  img :src => preview.images.first['url'], :width => 400
-                end
-              else
-                a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do
-                  img :src => preview.images.first['url']
-                end
+              a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do
+                img.thumbnail :src => preview.images.first['url']
               end
             end
 
-            p preview.description
+            p { preview.description }
 
             div { preview.embeds.first['html'] if preview.embeds.length > 0 }
           end

@@ -3,7 +3,9 @@ $shadow-color: #999999
 $color: #444444
 $background-color: #f6f6ef
 $link-color: #000000
+$content-link-color: #000055
 $embedly-background-color: #ffffff
+$main-width: 700px
 
 =radius($r)
   :border-radius $r
@@ -30,77 +32,85 @@ pre, code, kbd, samp
 body, select, input, textarea
   :color $color
 
-html, body
-  :font-family "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif
-  :height 100%
-  :overflow auto
-
-
 .main
+  :line-height 14px
+  :font-size 11px
+  :font-family "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif
   :background $background-color
   :margin
     :left auto
     :right auto
-  :width 700px
+  :width $main-width
   :padding 30px
 
   a
     :color $link-color
     :text-decoration none
-    :font-size 10pt
+    :font-weight bold
 
   a.article_link
     :font-size 14pt
 
   div.article_rank
-    :font-size 34pt
+    :font-size 40pt
     :width 65px
     :float left
-    :padding 0px 10px
+    :padding 24px 10px
     :text-align right
     :vertical-align top
-    :height 30px
 
   div.article_content
     :float left
     :margin-bottom 30px
+    :width 500px
 
   div.article_meta
     :text-align right
     :padding-right 20px
+    a
+      :font-weight normal
+
 
   .embedly
-    :width 500px
     :overflow auto
     :overflow-y auto
     :padding-bottom 10px
     :margin 5px
     :margin-bottom 13px
-    :padding 15px
+    :padding 15px 15px 5px 15px
     :border solid 1px $border-color
     :background-color $embedly-background-color
     +radius(4px)
     +shadow
 
-    p
-      :margin 5px
-
-    li
-      :margin 5px
-
-    img
-      :float left
-      :margin 10px
-
-    a:hover
-      :text-decoration underline
-
     .embedly_title
       :font-weight bold
-      :font-size 2em
-      :line-height 1.1em
-      :margin-bottom 1.5em
+      :margin-bottom 14px
       :text-decoration none
+      a
+        :font-size 24px
+        :line-height 1.1em
+
+    .embedly_content
+      p
+        :margin-bottom 10px
+
+      li
+        :margin 13px
+
+      img
+        :float left
+        :margin 5px 10px
+        :max-width 450px
+
+      img.thumbnail
+        :max-width 200px
+
+      a
+        :color $content-link-color
+
+      a:hover
+        :text-decoration underline
 
 .clear
   :clear both

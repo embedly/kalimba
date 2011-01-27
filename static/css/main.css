@@ -13,8 +13,10 @@ pre, code, kbd, samp {
 body, select, input, textarea {
   color: #444444; }
 
-body {
-  font-family: "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif; }
+html, body {
+  font-family: "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif;
+  height: 100%;
+  overflow: auto; }
 
 a {
   color: black;
@@ -34,17 +36,26 @@ span.article_rank {
   padding: 30px; }
 
 .embedly {
-  display: none;
+  width: 400px;
+  position: fixed;
+  height: 95%;
+  right: 80px;
+  top: 10px;
+  overflow: auto;
+  overflow-y: auto;
+  padding-bottom: 10px;
   margin: 5px;
   margin-bottom: 13px;
   padding: 5px;
+  display: none;
   border: solid 1px #cccccc;
+  background-color: white;
   border-radius: 8px;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
-  box-shadow: 6px 6px 8px #333333;
-  -moz-box-shadow: 6px 6px 8px #333333;
-  -webkit-box-shadow: 6px 6px 8px #333333; }
+  box-shadow: 6px 6px 8px #666666;
+  -moz-box-shadow: 6px 6px 8px #666666;
+  -webkit-box-shadow: 6px 6px 8px #666666; }
   .embedly img {
     float: left;
     margin: 10px; }

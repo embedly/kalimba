@@ -1,8 +1,9 @@
 $border-color: #cccccc
-$shadow-color: #333333
+$shadow-color: #666666
 $color: #444444
 $background-color: #f6f6ef
 $link-color: #000000
+$embedly-background-color: #ffffff
 
 =radius($r)
   :border-radius $r
@@ -29,8 +30,10 @@ pre, code, kbd, samp
 body, select, input, textarea
   :color $color
 
-body
+html, body
   :font-family "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif
+  :height 100%
+  :overflow auto
 
 a
   :color $link-color
@@ -50,11 +53,20 @@ span.article_rank
   :padding 30px
 
 .embedly
-  :display none
+  :width 400px
+  :position fixed
+  :height 95%
+  :right 80px
+  :top 10px
+  :overflow auto
+  :overflow-y auto
+  :padding-bottom 10px
   :margin 5px
   :margin-bottom 13px
   :padding 5px
+  :display none
   :border solid 1px $border-color
+  :background-color $embedly-background-color
   +radius(8px)
   +shadow
 

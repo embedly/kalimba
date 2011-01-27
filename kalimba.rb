@@ -157,9 +157,31 @@ module Kalimba::Views
         script do
           self <<<<-'SCRIPT'
           jQuery(document).ready(function($) {
-            $('.embedly_toggle').each(function() {
+            $('.article').each(function() {
               var self = $(this);
               self.find('.toggle_button').click(function() {
+                if (!self.find('.embedly').is(':visible')) {
+                  $('.embedly').each(function() {
+                    if ($(this).is(':visible') && $(this) != self) {
+                      $(this).toggle('fast');
+                    }
+                  });
+                }
+                self.find('.embedly').toggle('fast');
+                return false;
+              });
+            });
+            $('.article').each(function() {
+              var self = $(this);
+              console.log(self.find('.article_link'));
+              self.find('.article_link').mouseover(function() {
+                if (!self.find('.embedly').is(':visible')) {
+                  $('.embedly').each(function() {
+                    if ($(this).is(':visible') && $(this) != self) {
+                      $(this).toggle('fast');
+                    }
+                  });
+                }
                 self.find('.embedly').toggle('fast');
                 return false;
               });
@@ -224,9 +246,9 @@ module Kalimba::Views
             div.clear
 
             if preview.images.length != 0
-              if preview.images.first['width'] >= 450
+              if preview.images.first['width'] >= 500
                 a.embedly_thumbnail :target => '_blank', :href => preview.original_url, :title => preview.url do
-                  img :src => preview.images.first['url']
+                  img :src => preview.images.first['url'], :width => 400
                 end
               else
                 a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do

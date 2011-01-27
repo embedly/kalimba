@@ -18,55 +18,63 @@ html, body {
   height: 100%;
   overflow: auto; }
 
-a {
-  color: black;
-  text-decoration: none;
-  font-size: 10pt; }
-
-a.article_link {
-  font-size: 14pt; }
-
-span.article_rank {
-  font-size: 14pt; }
-
 .main {
   background: #f6f6ef;
-  margin-left: 60px;
-  margin-right: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 700px;
   padding: 30px; }
-
-.embedly {
-  width: 400px;
-  position: fixed;
-  height: 95%;
-  right: 80px;
-  top: 10px;
-  overflow: auto;
-  overflow-y: auto;
-  padding-bottom: 10px;
-  margin: 5px;
-  margin-bottom: 13px;
-  padding: 5px;
-  display: none;
-  border: solid 1px #cccccc;
-  background-color: white;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  box-shadow: 6px 6px 8px #666666;
-  -moz-box-shadow: 6px 6px 8px #666666;
-  -webkit-box-shadow: 6px 6px 8px #666666; }
-  .embedly img {
+  .main a {
+    color: black;
+    text-decoration: none;
+    font-size: 10pt; }
+  .main a.article_link {
+    font-size: 14pt; }
+  .main div.article_rank {
+    font-size: 34pt;
+    width: 65px;
     float: left;
-    margin: 10px; }
-  .embedly a:hover {
-    text-decoration: underline; }
-  .embedly .embedly_title {
-    font-weight: bold;
-    font-size: 2em;
-    line-height: 1.1em;
-    margin-bottom: 1.5em;
-    text-decoration: none; }
+    padding: 0px 10px;
+    text-align: right;
+    vertical-align: top;
+    height: 30px; }
+  .main div.article_content {
+    float: left;
+    margin-bottom: 30px; }
+  .main div.article_meta {
+    text-align: right;
+    padding-right: 20px; }
+  .main .embedly {
+    width: 500px;
+    overflow: auto;
+    overflow-y: auto;
+    padding-bottom: 10px;
+    margin: 5px;
+    margin-bottom: 13px;
+    padding: 15px;
+    border: solid 1px #cccccc;
+    background-color: white;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    box-shadow: 6px 6px 8px #999999;
+    -moz-box-shadow: 6px 6px 8px #999999;
+    -webkit-box-shadow: 6px 6px 8px #999999; }
+    .main .embedly p {
+      margin: 5px; }
+    .main .embedly li {
+      margin: 5px; }
+    .main .embedly img {
+      float: left;
+      margin: 10px; }
+    .main .embedly a:hover {
+      text-decoration: underline; }
+    .main .embedly .embedly_title {
+      font-weight: bold;
+      font-size: 2em;
+      line-height: 1.1em;
+      margin-bottom: 1.5em;
+      text-decoration: none; }
 
 .clear {
   clear: both; }

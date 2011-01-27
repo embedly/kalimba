@@ -154,41 +154,6 @@ module Kalimba::Views
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
-        script do
-          self <<<<-'SCRIPT'
-          jQuery(document).ready(function($) {
-            $('.article').each(function() {
-              var self = $(this);
-              self.find('.toggle_button').click(function() {
-                if (!self.find('.embedly').is(':visible')) {
-                  $('.embedly').each(function() {
-                    if ($(this).is(':visible') && $(this) != self) {
-                      $(this).toggle('fast');
-                    }
-                  });
-                }
-                self.find('.embedly').toggle('fast');
-                return false;
-              });
-            });
-            $('.article').each(function() {
-              var self = $(this);
-              console.log(self.find('.article_link'));
-              self.find('.article_link').mouseover(function() {
-                if (!self.find('.embedly').is(':visible')) {
-                  $('.embedly').each(function() {
-                    if ($(this).is(':visible') && $(this) != self) {
-                      $(this).toggle('fast');
-                    }
-                  });
-                }
-                self.find('.embedly').toggle('fast');
-                return false;
-              });
-            });
-          });
-          SCRIPT
-        end
       end
 
       body do
@@ -201,15 +166,18 @@ module Kalimba::Views
     ul.article_list do
       @articles.each do |article, preview|
         li.article do
-          span.article_rank "#{article.rank}. "
-          a.article_link article.title, :href => article.link, :target => '_blank'
-          br
-          a.comment_link 'Comments', :href => article.comments, :target => '_blank'
-          div do
-    #        h1 'preview'
-    #        pre(JSON.pretty_generate(preview.marshal_dump))
-            _embed(preview) if preview
+          div.article_rank { "#{article.rank}" }
+          div.article_content do
+            if preview
+              _embed(preview)
+            else
+              a.article_link article.title, :href => article.link, :target => '_blank'
+            end
+            div.article_meta do
+              a.comment_link 'Comments', :href => article.comments, :target => '_blank'
+            end
           end
+          div.clear {}
         end
       end
     end
@@ -243,7 +211,6 @@ module Kalimba::Views
         else
           if preview.type == 'html'
             a.embedly_title preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
-            div.clear
 
             if preview.images.length != 0
               if preview.images.first['width'] >= 500
@@ -259,7 +226,6 @@ module Kalimba::Views
 
             p preview.description
 
-            div.clear
             div { preview.embeds.first['html'] if preview.embeds.length > 0 }
           end
         end
@@ -268,11 +234,7 @@ module Kalimba::Views
   end
 
   def _embed preview
-    div.embedly_toggle do
-      a.toggle_button 'click me', :href => '#'
-      div.embedly { _content preview }
-      div.clear
-    end
+    div.embedly { _content preview }
   end
 end
 

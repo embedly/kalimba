@@ -251,22 +251,25 @@ module Kalimba::Views
               });
               var index = 0;
               $(document).keypress(function(event) {
-                event.preventDefault();
                 if (event.which == '106') {
+                  event.preventDefault();
                   if (index < 29) {
                     index++;
                   }
                   index %= 30;
                   document.location.href = '#'+(index+1);
                 } else if (event.which == '107') {
+                  event.preventDefault();
                   if (index > 0) {
                     index--;
                   }
                   index %= 30;
                   document.location.href = '#'+(index+1);
                 } else if (event.which == '99') {
+                  event.preventDefault();
                   $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
                 } else if (event.which == '100') {
+                  event.preventDefault();
                   $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
                 }
               });

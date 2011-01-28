@@ -252,7 +252,6 @@ module Kalimba::Views
               var index = 0;
               $(document).keypress(function(event) {
                 event.preventDefault();
-                console.log(event.which);
                 if (event.which == '106') {
                   if (index < 29) {
                     index++;
@@ -266,10 +265,8 @@ module Kalimba::Views
                   index %= 30;
                   document.location.href = '#'+(index+1);
                 } else if (event.which == '99') {
-                  console.log('c');
                   $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
                 } else if (event.which == '100') {
-                  console.log('d');
                   $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
                 }
               });

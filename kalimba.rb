@@ -246,7 +246,6 @@ module Kalimba::Views
                 center: true
               });
               $('.top_comment_link').click(function(event) {
-                console.log('click received');
                 event.preventDefault();
                 $(this).parent().find('.top_comment').toggle('fast');
               });

@@ -224,7 +224,7 @@ module Kalimba::Views
         title { "Kalimba - #{TAGLINE}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
-        link :rel => 'canonical', :href => R(Index)
+        link :rel => 'canonical', :href => 'http://hn.embed.ly'
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
         meta :name => 'description', :content => TAGLINE
@@ -240,7 +240,7 @@ module Kalimba::Views
                 mode: 'inject',
                 service: '202,7,5,40,2,52,3',
                 apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
-                link: "#{R(Index)}",
+                link: "http://hn.embed.ly",
                 short_link: 'http://bit.ly/ecDrFU',
                 title: 'Kalimba - #{TAGLINE}',
                 center: true

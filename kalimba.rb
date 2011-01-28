@@ -250,27 +250,33 @@ module Kalimba::Views
                 $(this).parent().find('.top_comment').toggle('fast');
               });
               var index = 0;
-              $(document).keypress(function(event) {
-                if (event.which == '106') {
+              if (document.location.hash) {
+                index = document.location.hash.substring(1) - 1;
+              }
+              $(document).keyup(function(event) {
+                var keyCode = event.keyCode ? event.keyCode : event.which;
+                if (keyCode == '74' || keyCode == '39') {
                   event.preventDefault();
                   if (index < 29) {
                     index++;
                   }
                   index %= 30;
                   document.location.href = '#'+(index+1);
-                } else if (event.which == '107') {
+                } else if (keyCode == '75' || keyCode == '37') {
                   event.preventDefault();
                   if (index > 0) {
                     index--;
                   }
                   index %= 30;
                   document.location.href = '#'+(index+1);
-                } else if (event.which == '99') {
+                } else if (keyCode == '67') {
                   event.preventDefault();
                   $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
-                } else if (event.which == '100') {
+                } else if (keyCode == '68') {
                   event.preventDefault();
                   $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
+                } else if (keyCode == '191') {
+                  event.preventDefault();
                 }
               });
             });

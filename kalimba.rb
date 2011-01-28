@@ -236,7 +236,7 @@ module Kalimba::Views
           div.article_rank { "#{article.rank}" }
           div.article_content do
             if preview and preview.title and preview.title.strip != ''
-              _embed(preview)
+              _embed(article, preview)
             else
               div.embedly do
                 div.embedly_title do
@@ -263,7 +263,7 @@ module Kalimba::Views
   end
 
   # Too complicated
-  def _content preview
+  def _content article, preview
     case preview.type
     when 'image'
       a.embedly_thumbnail(:href => preview.original_url) do
@@ -276,7 +276,7 @@ module Kalimba::Views
     else
       if preview.content
         div.embedly_title do
-          a preview.title, :target => '_blank', :href => preview.url
+          a article.title, :target => '_blank', :href => preview.url
         end
         div.embedly_content do
           p { preview.content }
@@ -293,7 +293,7 @@ module Kalimba::Views
           div.embedly_content { preview.object['html'] }
         else
           div.embedly_title do
-            a preview.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+            a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
           end
 
           div.embedly_content do
@@ -310,10 +310,19 @@ module Kalimba::Views
         end
       end
     end
+    div.clear {}
+    div.provider do
+      self << 'via '
+      if preview.favicon_url
+        img.provider_favicon :src => preview.favicon_url
+        self << ' '
+      end
+      a.provider_link preview.provider_name, :href => preview.provider_url
+    end
   end
 
-  def _embed preview
-    div.embedly { _content preview }
+  def _embed article, preview
+    div.embedly { _content article, preview }
   end
 end
 

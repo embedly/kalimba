@@ -85,23 +85,40 @@ body, select, input, textarea {
       .main .embedly .embedly_title a {
         font-size: 24px;
         line-height: 1.1em; }
-    .main .embedly .embedly_content p {
-      margin-bottom: 10px; }
-    .main .embedly .embedly_content ul {
-      margin-bottom: 0px;
-      padding-bottom: 0px; }
-    .main .embedly .embedly_content li {
-      margin: 13px; }
-    .main .embedly .embedly_content img {
-      float: left;
-      margin: 5px 10px;
-      max-width: 450px; }
-    .main .embedly .embedly_content img.thumbnail {
-      max-width: 200px; }
-    .main .embedly .embedly_content a {
-      color: #000055; }
-    .main .embedly .embedly_content a:hover {
-      text-decoration: underline; }
+    .main .embedly .embedly_content {
+      margin-bottom: 20px; }
+      .main .embedly .embedly_content p {
+        margin-bottom: 10px; }
+      .main .embedly .embedly_content ul {
+        margin-bottom: 0px;
+        padding-bottom: 0px; }
+      .main .embedly .embedly_content li {
+        margin: 13px; }
+      .main .embedly .embedly_content img {
+        float: left;
+        margin: 5px 10px;
+        max-width: 450px; }
+      .main .embedly .embedly_content img.thumbnail {
+        max-width: 200px; }
+      .main .embedly .embedly_content a {
+        color: #000055; }
+      .main .embedly .embedly_content a:hover {
+        text-decoration: underline; }
+    .main .embedly .provider {
+      float: right;
+      line-height: 13px;
+      vertical-align: middle;
+      height: 16px;
+      padding-bottom: 2px;
+      color: #999999; }
+      .main .embedly .provider .provider_favicon {
+        height: 16px;
+        width: 16px;
+        vertical-align: middle; }
+      .main .embedly .provider .provider_link {
+        color: #555555;
+        font-size: 11px;
+        vertical-align: middle; }
 
 .clear {
   clear: both; }

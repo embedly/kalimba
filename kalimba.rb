@@ -235,21 +235,23 @@ module Kalimba::Views
         script do
           self <<<<-"END"
             jQuery(document).ready(function($) {
-              SHR4P_init();
-              $('.shr').shareaholic_publishers({
-                mode: 'inject',
-                service: '202,7,5,40,2,52,3',
-                apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
-                link: "http://hn.embed.ly",
-                short_link: 'http://bit.ly/ecDrFU',
-                title: 'Kalimba - #{TAGLINE}',
-                center: true
-              });
+              try {
+                SHR4P_init();
+                $('.shr').shareaholic_publishers({
+                  mode: 'inject',
+                  service: '202,7,5,40,2,52,3',
+                  apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
+                  link: "http://hn.embed.ly",
+                  short_link: 'http://bit.ly/ecDrFU',
+                  title: 'Kalimba - #{TAGLINE}',
+                  center: true
+                });
+              } catch (e) {}
               $('.top_comment_link').click(function(event) {
                 event.preventDefault();
                 $(this).parent().find('.top_comment').toggle('fast');
               });
-              var index = 0;
+              var index = -1; // so first is 1
               if (document.location.hash) {
                 index = document.location.hash.substring(1) - 1;
               }
@@ -271,10 +273,14 @@ module Kalimba::Views
                   document.location.href = '#'+(index+1);
                 } else if (keyCode == '67') {
                   event.preventDefault();
-                  $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
+                  if (index < 30 && index >= 0) {
+                    $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
+                  }
                 } else if (keyCode == '68') {
                   event.preventDefault();
-                  $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
+                  if (index < 30 && index >= 0) {
+                    $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
+                  }
                 } else if (keyCode == '191') {
                   event.preventDefault();
                 }

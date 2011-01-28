@@ -174,7 +174,7 @@ module Kalimba::Views
   def layout
     html do
       head do
-        title { "Kalimba - Rose Colored Glasses for Hacker News" }
+        title { "Kalimba - Hacker News Interface with Embedly" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'

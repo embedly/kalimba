@@ -16,6 +16,8 @@ end
 
 Camping.goes :Kalimba
 
+TAGLINE = "Embedly Colored Glasses for Hacker News"
+
 #module Kalimba
 #  include Camping::Session
 #end
@@ -174,17 +176,17 @@ module Kalimba::Views
   def layout
     html do
       head do
-        title { "Kalimba - Hacker News Interface with Embedly" }
+        title { "Kalimba - #{TAGLINE}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
-        meta :name => 'description', :content => 'Hacker News Interface with Embedly'
+        meta :name => 'description', :content => TAGLINE
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
         script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
         script do
-          self <<<<-'END'
+          self <<<<-"END"
             jQuery(document).ready(function($) {
               SHR4P_init();
               $('.shr').shareaholic_publishers({
@@ -193,7 +195,7 @@ module Kalimba::Views
                 apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
                 link: 'http://kalimba.embed.ly',
                 short_link: 'http://bit.ly/ecDrFU',
-                title: 'Embedly Kalimba - Hacker News Interface with Embedly',
+                title: 'Kalimba - #{TAGLINE}',
                 center: true
               });
             });
@@ -216,7 +218,7 @@ module Kalimba::Views
 
       body do
         div.header do
-          div.title 'KALIMBA - A Hacker News Interface with Embedly'
+          div.title "KALIMBA - #{TAGLINE}"
         end
         div.main do
           self << yield

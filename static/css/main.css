@@ -63,12 +63,19 @@ body, select, input, textarea {
     .main div.article_meta img {
       vertical-align: top; }
     .main div.article_meta .top_comment {
+      margin-left: 6px;
+      padding: 15px;
       display: none;
+      color: black;
       text-align: left; }
       .main div.article_meta .top_comment .comment_head {
-        padding-bottom: 15px; }
+        color: #828282;
+        padding-bottom: 10px; }
+        .main div.article_meta .top_comment .comment_head a {
+          font-weight: bold;
+          color: #828282; }
       .main div.article_meta .top_comment .comment_content p, .main div.article_meta .top_comment .comment_content span {
-        margin-bottom: 10px; }
+        margin-top: 10px; }
   .main div.like {
     float: right;
     width: 150px; }

@@ -230,7 +230,8 @@ module Kalimba::Views
         meta :name => 'description', :content => TAGLINE
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
-        script(:src => R(GoogleApi, 'jquery/1.4.2/jquery.min.js')) {}
+        script(:src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
+        script(:src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
         script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
         script do
           self <<<<-"END"
@@ -247,42 +248,101 @@ module Kalimba::Views
                   center: true
                 });
               } catch (e) {}
+
               $('.top_comment_link').click(function(event) {
                 event.preventDefault();
                 $(this).parent().find('.top_comment').toggle('fast');
               });
+
               var index = -1; // so first is 1
+
+              var current = function() {
+                return $('a[name='+(index+1)+']').parent();
+              }
+              var up = function() {
+                if (index > 0) {
+                  index--;
+                  index %= 30;
+                  document.location.href = '#'+(index+1);
+                  highlight();
+                }
+              }
+              var down = function() {
+                if (index < 29) {
+                  index++;
+                  index %= 30;
+                  document.location.href = '#'+(index+1);
+                  highlight();
+                }
+              }
+              var toggle_content = function() {
+                if (index < 30 && index >= 0) {
+                  current().find('.embedly_content').toggle('fast')
+                }
+              }
+              var toggle_comments = function() {
+                if (index < 30 && index >= 0) {
+                  current().find('.top_comment').toggle('fast')
+                }
+              }
+              var follow = function(shift) {
+                var href = current().find('.embedly_title').find('a').last().attr('href');
+                if (shift) {
+                  window.open(href);
+                } else {
+                  document.location.href = href;
+                }
+              }
+              var highlight = function() {
+                $('.article_rank').removeClass('selected');
+                if (index < 30 && index >= 0) {
+                  current().find('.article_rank').addClass('selected');
+                }
+              }
+
               if (document.location.hash) {
                 index = document.location.hash.substring(1) - 1;
+                highlight();
               }
+
+              $(document).keypress(function(event) {
+                switch(event.which) {
+                case 106: // j
+                  event.preventDefault();
+                  down();
+                  break;
+                case 107: // k
+                  event.preventDefault();
+                  up();
+                  break;
+                case 99:  // c
+                  event.preventDefault();
+                  toggle_comments();
+                  break;
+                case 100: // d
+                  event.preventDefault();
+                  toggle_content();
+                  break;
+                case 13:  // enter
+                  event.preventDefault();
+                  follow(event.shiftKey);
+                default:
+                  break;
+                }
+              });
+
+              // for arrows
               $(document).keyup(function(event) {
-                var keyCode = event.keyCode ? event.keyCode : event.which;
-                if (keyCode == '74' || keyCode == '39') {
+                switch(event.keyCode) {
+                case 39:  // down arrow
                   event.preventDefault();
-                  if (index < 29) {
-                    index++;
-                  }
-                  index %= 30;
-                  document.location.href = '#'+(index+1);
-                } else if (keyCode == '75' || keyCode == '37') {
+                  down();
+                  break;
+                case 37:  // up arrow
                   event.preventDefault();
-                  if (index > 0) {
-                    index--;
-                  }
-                  index %= 30;
-                  document.location.href = '#'+(index+1);
-                } else if (keyCode == '67') {
-                  event.preventDefault();
-                  if (index < 30 && index >= 0) {
-                    $('a[name='+(index+1)+']').parent().find('.top_comment').toggle('fast')
-                  }
-                } else if (keyCode == '68') {
-                  event.preventDefault();
-                  if (index < 30 && index >= 0) {
-                    $('a[name='+(index+1)+']').parent().find('.embedly_content').toggle('fast')
-                  }
-                } else if (keyCode == '191') {
-                  event.preventDefault();
+                  up();
+                default:
+                  break;
                 }
               });
             });

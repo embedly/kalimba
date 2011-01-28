@@ -51,6 +51,8 @@ body, select, input, textarea {
     padding: 24px 10px;
     text-align: right;
     vertical-align: top; }
+  .main div.selected {
+    color: #ff6600; }
   .main div.article_content {
     float: left;
     margin-bottom: 30px;
@@ -78,7 +80,8 @@ body, select, input, textarea {
         margin-top: 10px; }
   .main div.like {
     float: right;
-    width: 150px; }
+    width: 150px;
+    overflow: hidden; }
   .main .embedly {
     overflow: auto;
     overflow-y: auto;

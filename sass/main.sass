@@ -5,6 +5,7 @@ $background-color: #f6f6ef
 $link-color: #000000
 $content-link-color: #000055
 $embedly-background-color: #ffffff
+$hn-color: #f60
 $main-width: 700px
 
 =radius($r)
@@ -76,6 +77,9 @@ body, select, input, textarea
     :text-align right
     :vertical-align top
 
+  div.selected
+    :color $hn-color
+
   div.article_content
     :float left
     :margin-bottom 30px
@@ -108,6 +112,7 @@ body, select, input, textarea
   div.like
     :float right
     :width 150px
+    :overflow hidden
 
   .embedly
     :overflow auto

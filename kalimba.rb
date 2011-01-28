@@ -178,7 +178,7 @@ module Kalimba::Views
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
-        link :rel => 'image_src', :href => 'http://static.embed.ly/images/logs/embedly-powered-large-light.png'
+        link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
         meta :name => 'description', :content => 'Hacker News Interface with Embedly'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}

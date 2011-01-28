@@ -60,6 +60,15 @@ body, select, input, textarea {
     padding-right: 20px; }
     .main div.article_meta a {
       font-weight: normal; }
+    .main div.article_meta img {
+      vertical-align: top; }
+    .main div.article_meta .top_comment {
+      display: none;
+      text-align: left; }
+      .main div.article_meta .top_comment .comment_head {
+        padding-bottom: 15px; }
+      .main div.article_meta .top_comment .comment_content p, .main div.article_meta .top_comment .comment_content span {
+        margin-bottom: 10px; }
   .main div.like {
     float: right;
     width: 150px; }

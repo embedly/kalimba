@@ -17,6 +17,11 @@ end
 Camping.goes :Kalimba
 
 TAGLINE = "Embedly Colored Glasses for Hacker News"
+TOP_COMMENT = true
+EMBEDLY_KEY = '409326e2259411e088ae4040f9f86dcd'
+IMAGE_ROOT = 'http://static.embed.ly/images/kalimba'
+HN_ROOT = 'http://news.ycombinator.com'
+GOOGLE_API = 'http://ajax.googleapis.com/ajax/libs'
 
 #module Kalimba
 #  include Camping::Session
@@ -120,6 +125,22 @@ module Kalimba::Models
       remove_column Article.table_name, :points
     end
   end
+
+  class AddTopComment < V 0.3
+    def self.up
+      change_table Article.table_name do |t|
+        t.text :top_comment_content
+        t.string :top_comment_author
+        t.integer :top_comment_points
+      end
+    end
+
+    def self.down
+      remove_column Article.table_name, :top_comment_content
+      remove_column Article.table_name, :top_comment_author
+      remove_column Article.table_name, :top_comment_points
+    end
+  end
 end
 
 module Kalimba::Controllers
@@ -155,10 +176,29 @@ module Kalimba::Controllers
         }
       end
 
+      if TOP_COMMENT
+        articles.each do |a|
+          puts "processing #{a[:comments]}"
+          doc = Hpricot(open(a[:comments]))
+          top_comment = doc.at('.default')
+          if top_comment
+            a[:top_comment_points] = top_comment.at('.comhead/span').inner_html[/\d+/]
+            a[:top_comment_author] = top_comment.at('.comhead/a').inner_html.strip
+            content = []
+            node = top_comment.at('.comment')
+            # we are intentionally skipping the last node (reply node)
+            while node.next_node
+              content << node.to_s
+              node = node.next_node
+            end
+            a[:top_comment_content] = content.join
+          end
+        end
+      end
 
       urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
       if urls.size > 0
-        api = ::Embedly::API.new :key => '409326e2259411e088ae4040f9f86dcd'
+        api = ::Embedly::API.new :key => EMBEDLY_KEY
         api.preview(:urls => urls, :maxwidth => 200).each_with_index do |preview, i|
           Preview.save_preview urls[i], preview
         end
@@ -170,6 +210,11 @@ module Kalimba::Controllers
       redirect R(Index)
     end
   end
+
+  # dummies to make links
+  class Image < R "#{IMAGE_ROOT}/(.*)"; end
+  class HackerNews < R "#{HN_ROOT}/(.*)"; end
+  class GoogleApi < R "#{GOOGLE_API}/(.*)"; end
 end
 
 module Kalimba::Views
@@ -179,13 +224,13 @@ module Kalimba::Views
         title { "Kalimba - #{TAGLINE}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
-        link :rel => 'canonical', :href => 'http://kalimba.embed.ly/'
-        link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
+        link :rel => 'canonical', :href => R(Index)
+        link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
         meta :name => 'description', :content => TAGLINE
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
-        script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
+        script(:src => R(GoogleApi, 'jquery/1.4.2/jquery.min.js')) {}
         script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
         script do
           self <<<<-"END"
@@ -195,10 +240,15 @@ module Kalimba::Views
                 mode: 'inject',
                 service: '202,7,5,40,2,52,3',
                 apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
-                link: 'http://kalimba.embed.ly',
+                link: "#{R(Index)}",
                 short_link: 'http://bit.ly/ecDrFU',
                 title: 'Kalimba - #{TAGLINE}',
                 center: true
+              });
+              $('.top_comment_link').click(function(event) {
+                console.log('click received');
+                event.preventDefault();
+                $(this).parent().find('.top_comment').toggle('fast');
               });
             });
           END
@@ -251,6 +301,20 @@ module Kalimba::Views
               self << " | "
               a.comment_link "#{article.comment_count} comments",
                 :href => article.comments, :target => '_blank'
+              if TOP_COMMENT
+                a.top_comment_link :href => '#', :title => 'see top comment' do
+                  self << ' '
+                  img.top_comment_icon :src => R(Image, "icon_eye.png"), :alt => 'see top comment'
+                end
+                div.top_comment do
+                  div.comment_head do
+                    self << "#{article.top_comment_points} points by "
+                    a.top_comment_author article.top_comment_author,
+                      :href => R(HackerNews, "user?id=#{article.top_comment_author}")
+                  end
+                  div.comment_content { article.top_comment_content }
+                end
+              end
             end
           end
           div.clear {}

@@ -249,6 +249,21 @@ module Kalimba::Views
                 event.preventDefault();
                 $(this).parent().find('.top_comment').toggle('fast');
               });
+              var index = 0;
+              $(document).keypress(function(event) {
+                event.preventDefault();
+                if (event.which == '106') {
+                  if (index < 29) {
+                    index++;
+                  }
+                } else if (event.which == '107') {
+                  if (index > 0) {
+                    index--;
+                  }
+                }
+                index %= 30;
+                document.location.href = '#'+(index+1);
+              });
             });
           END
         end
@@ -282,6 +297,7 @@ module Kalimba::Views
     ul.article_list do
       @articles.each do |article, preview|
         li.article do
+          a.index :name => article.rank
           div.article_rank { "#{article.rank}" }
           div.article_content do
             if preview and preview.title and preview.title.strip != ''

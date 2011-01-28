@@ -178,6 +178,7 @@ module Kalimba::Views
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
+        link :rel => 'image_src', :href => 'http://static.embed.ly/images/logs/embedly-powered-large-light.png'
         meta :name => 'description', :content => 'Hacker News Interface with Embedly'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
@@ -192,7 +193,7 @@ module Kalimba::Views
                 apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
                 link: 'http://kalimba.embed.ly',
                 short_link: 'http://bit.ly/ecDrFU',
-                title: 'Embedly Kalimba - Rose Colored Glasses for Hacker News',
+                title: 'Embedly Kalimba - Hacker News Interface with Embedly',
                 center: true
               });
             });

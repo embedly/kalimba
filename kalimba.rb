@@ -178,6 +178,8 @@ module Kalimba::Views
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'icon', :href => 'http://static.embed.ly/images/kalimba/favicon.ico', :type => 'image/x-icon'
+        meta :name => 'description', :content => 'Hacker News Interface with Embedly'
+        meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js') {}
         script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
         script do
@@ -213,7 +215,7 @@ module Kalimba::Views
 
       body do
         div.header do
-          div.title 'KALIMBA - Rose Colored Glasses for Hacker News'
+          div.title 'KALIMBA - A Hacker News Interface with Embedly'
         end
         div.main do
           self << yield

@@ -20,7 +20,8 @@ body, select, input, textarea {
   padding: 0px 30px;
   font-family: "Lucida Grande", "Trebuchet MS", Trebuchet, Helvetica, Arial, sans-serif;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+  margin-top: 10px; }
   .header .title {
     background: transparent url("http://static.embed.ly/images/kalimba/orange-logo.png") no-repeat center left;
     padding: 11px;

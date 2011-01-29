@@ -159,7 +159,6 @@ module Kalimba::Controllers
 
   class Update < R '/update'
     def get
-      Article.delete_all
 
       articles = []
       doc = Hpricot(open('http://news.ycombinator.com/'))
@@ -178,20 +177,23 @@ module Kalimba::Controllers
 
       if TOP_COMMENT
         articles.each do |a|
-          puts "processing #{a[:comments]}"
-          doc = Hpricot(open(a[:comments]))
-          top_comment = doc.at('.default')
-          if top_comment
-            a[:top_comment_points] = top_comment.at('.comhead/span').inner_html[/\d+/]
-            a[:top_comment_author] = top_comment.at('.comhead/a').inner_html.strip
-            content = []
-            node = top_comment.at('.comment')
-            # we are intentionally skipping the last node (reply node)
-            while node.next_node
-              content << node.to_s
-              node = node.next_node
+          begin
+            doc = Hpricot(open(a[:comments]))
+            top_comment = doc.at('.default')
+            if top_comment
+              a[:top_comment_points] = top_comment.at('.comhead/span').inner_html[/\d+/]
+              a[:top_comment_author] = top_comment.at('.comhead/a').inner_html.strip
+              content = []
+              node = top_comment.at('.comment')
+              # we are intentionally skipping the last node (reply node)
+              while node.next_node
+                content << node.to_s
+                node = node.next_node
+              end
+              a[:top_comment_content] = content.join
             end
-            a[:top_comment_content] = content.join
+          rescue
+            puts "Failed to parse #{a[:comments]}"
           end
         end
       end
@@ -204,6 +206,7 @@ module Kalimba::Controllers
         end
       end
 
+      Article.delete_all
       Article.create articles
 
 

@@ -428,7 +428,7 @@ module Kalimba::Views
               self << " | "
               a.comment_link "#{article.comment_count} comments",
                 :href => article.comments, :target => '_blank'
-              if TOP_COMMENT
+              if TOP_COMMENT and article.comment_count and article.comment_count > 0
                 a.top_comment_link :href => '#', :title => 'see top comment' do
                   self << ' '
                   img.top_comment_icon :src => R(Image, "icon_eye.png"), :alt => 'see top comment'

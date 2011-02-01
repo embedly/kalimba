@@ -6,6 +6,7 @@ require 'json'
 require 'digest/sha1'
 require 'ostruct'
 require 'sass'
+require 'yaml'
 
 # PUNK
 class OpenStruct
@@ -16,19 +17,13 @@ end
 
 Camping.goes :Kalimba
 
-TAGLINE = "Embedly Colored Glasses for Hacker News"
-TOP_COMMENT = true
-EMBEDLY_KEY = '409326e2259411e088ae4040f9f86dcd'
-IMAGE_ROOT = 'http://static.embed.ly/images/kalimba'
-HN_ROOT = 'http://news.ycombinator.com'
-GOOGLE_API = 'http://ajax.googleapis.com/ajax/libs'
-RATE_LIMIT = 60 # seconds between updates
+CONFIG = YAML.load(File.read('config/app.yml'))
 
 module Kalimba::Models
   class Article < Base
     def self.normalize_url link
       if link !~ /^http/
-        "http://news.ycombinator.com/#{link}"
+        "#{CONFIG[:hn_root]}/#{link}"
       else
         link
       end
@@ -171,17 +166,15 @@ module Kalimba::Controllers
 
   class Update
     def get
-
       last_update = Kalimba::Models::Update.find(:last)
-      if RATE_LIMIT and last_update and
-          last_update.created_at + RATE_LIMIT.seconds > Time.now
-        puts 'rate limited'
+      if CONFIG[:rate_limit] and last_update and
+          last_update.created_at + CONFIG[:rate_limit].seconds > Time.now
         redirect R(Index)
         return
       end
 
       articles = []
-      doc = Hpricot(open(HN_ROOT))
+      doc = Hpricot(open(CONFIG[:hn_root]))
       (doc/'.subtext/..').each do |subtext|
         article = subtext.previous_node
         articles << {
@@ -195,7 +188,7 @@ module Kalimba::Controllers
         }
       end
 
-      if TOP_COMMENT
+      if CONFIG[:top_comment]
         articles.each do |a|
           begin
             doc = Hpricot(open(a[:comments]))
@@ -220,7 +213,7 @@ module Kalimba::Controllers
 
       urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
       if urls.size > 0
-        api = ::Embedly::API.new :key => EMBEDLY_KEY
+        api = ::Embedly::API.new :key => CONFIG[:embedly_key], :user_agent => 'Mozilla/5.0 (compatible; Kalimba/0.1;)'
         api.preview(:urls => urls, :maxwidth => 200).each_with_index do |preview, i|
           Preview.save_preview urls[i], preview
         end
@@ -235,42 +228,51 @@ module Kalimba::Controllers
   end
 
   # dummies to make links
-  class Image < R "#{IMAGE_ROOT}/(.*)"; end
-  class HackerNews < R "#{HN_ROOT}/(.*)"; end
-  class GoogleApi < R "#{GOOGLE_API}/(.*)"; end
+  class Image < R "#{CONFIG[:image_root]}/(.*)"; end
+  class HackerNews < R "#{CONFIG[:hn_root]}/(.*)"; end
+  class GoogleApi < R "#{CONFIG[:google_api]}/(.*)"; end
 end
 
 module Kalimba::Views
   def layout
     html do
       head do
-        title { "Kalimba - #{TAGLINE}" }
+        title { "Kalimba - #{CONFIG[:tagline]}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
-        link :rel => 'canonical', :href => 'http://hn.embed.ly'
+        link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
-        meta :name => 'description', :content => TAGLINE
+        meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
         script(:src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
         script do
           self <<<<-"END"
-            SHRSB_Globals = {src: 'http://www.shareaholic.com'};
-            SHRSB_Settings = {
-              'shr': {
-                mode: 'inject',
-                service: '202,7,5,40,2,52,3',
-                apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
-                link: "http://hn.embed.ly",
-                short_link: 'http://bit.ly/ecDrFU',
-                title: 'Kalimba - #{TAGLINE}',
-                center: true
+            jQuery(document).ready(function($) {
+              if (typeof(SHR4P) == 'undefined') {
+                SHR4P = {};
               }
-            };
+              SHR4P.onready = function() {
+                SHR4P.jQuery('.shr').shareaholic_publishers({
+                  mode: 'inject',
+                  showShareCount: true,
+                  service: '202,7,5,40,2,52,3',
+                  apikey: '#{CONFIG[:shareaholic_key]}',
+                  link: "#{CONFIG[:canonical_url]}",
+                  short_link: '#{CONFIG[:short_url]}',
+                  title: 'Kalimba - #{CONFIG[:tagline]}',
+                  center: true
+                });
+              };
+              if (typeof(SHR4P.ready) != 'undefined' && SHR4P.ready) {
+                SHR4P.onready();
+              }
+            });
           END
         end
+        script(:src => CONFIG[:shareaholic_plugin]) {}
 
         script do
           self <<<<-"END"
@@ -387,12 +389,11 @@ module Kalimba::Views
             })();
          END
         end
-        script(:src => 'http://greenspaces.in/blog/wp-content/plugins/sexybookmarks/js/shareaholic-publishers.js?ver=3.3.2') {}
       end
 
       body do
         div.header do
-          div.title "KALIMBA - #{TAGLINE}"
+          div.title "KALIMBA - #{CONFIG[:tagline]}"
         end
         div.main do
           self << yield
@@ -424,7 +425,7 @@ module Kalimba::Views
               self << " | "
               a.comment_link "#{article.comment_count} comments",
                 :href => article.comments, :target => '_blank'
-              if TOP_COMMENT and article.comment_count and article.comment_count > 0
+              if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
                 a.top_comment_link :href => '#', :title => 'see top comment' do
                   self << ' '
                   img.top_comment_icon :src => R(Image, "icon_eye.png"), :alt => 'see top comment'

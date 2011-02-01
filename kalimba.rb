@@ -467,6 +467,10 @@ module Kalimba::Views
 
   # Too complicated
   def _content article, preview
+    div.embedly_title do
+      a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+    end
+
     case preview.type
     when 'image'
       a.embedly_thumbnail(:href => preview.original_url) do
@@ -478,9 +482,6 @@ module Kalimba::Views
       audio.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
     else
       if preview.content
-        div.embedly_title do
-          a article.title, :target => '_blank', :href => preview.url
-        end
         div.embedly_content do
           p { preview.content }
         end
@@ -495,10 +496,6 @@ module Kalimba::Views
         when 'video', 'rich'
           div.embedly_content { preview.object['html'] }
         else
-          div.embedly_title do
-            a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
-          end
-
           div.embedly_content do
             if preview.images.length != 0
               a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do

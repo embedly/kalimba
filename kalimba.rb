@@ -24,10 +24,6 @@ HN_ROOT = 'http://news.ycombinator.com'
 GOOGLE_API = 'http://ajax.googleapis.com/ajax/libs'
 RATE_LIMIT = 60 # seconds between updates
 
-#module Kalimba
-#  include Camping::Session
-#end
-
 module Kalimba::Models
   class Article < Base
     def self.normalize_url link
@@ -465,7 +461,6 @@ module Kalimba::Views
     end
   end
 
-  # Too complicated
   def _content article, preview
     div.embedly_title do
       a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
@@ -527,6 +522,5 @@ module Kalimba::Views
 end
 
 def Kalimba.create
-  #Camping::Models::Session.create_schema
   Kalimba::Models.create_schema
 end

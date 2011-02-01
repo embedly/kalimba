@@ -173,7 +173,7 @@ module Kalimba::Controllers
     end
   end
 
-  class Update < R '/update'
+  class Update
     def get
 
       last_update = Kalimba::Models::Update.find(:last)

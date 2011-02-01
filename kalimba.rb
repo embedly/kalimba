@@ -248,31 +248,34 @@ module Kalimba::Views
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
         script(:src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
-        script do
-          self <<<<-"END"
-            jQuery(document).ready(function($) {
-              if (typeof(SHR4P) == 'undefined') {
-                SHR4P = {};
-              }
-              SHR4P.onready = function() {
-                SHR4P.jQuery('.shr').shareaholic_publishers({
-                  mode: 'inject',
-                  showShareCount: true,
-                  service: '202,7,5,40,2,52,3',
-                  apikey: '#{CONFIG[:shareaholic_key]}',
-                  link: "#{CONFIG[:canonical_url]}",
-                  short_link: '#{CONFIG[:short_url]}',
-                  title: 'Kalimba - #{CONFIG[:tagline]}',
-                  center: true
-                });
-              };
-              if (typeof(SHR4P.ready) != 'undefined' && SHR4P.ready) {
-                SHR4P.onready();
-              }
-            });
-          END
+
+        if CONFIG[:shareaholic_key]
+          script do
+            self <<<<-"END"
+              jQuery(document).ready(function($) {
+                if (typeof(SHR4P) == 'undefined') {
+                  SHR4P = {};
+                }
+                SHR4P.onready = function() {
+                  SHR4P.jQuery('.shr').shareaholic_publishers({
+                    mode: 'inject',
+                    showShareCount: true,
+                    service: '202,7,5,40,2,52,3',
+                    apikey: '#{CONFIG[:shareaholic_key]}',
+                    link: "#{CONFIG[:canonical_url]}",
+                    short_link: '#{CONFIG[:short_url]}',
+                    title: 'Kalimba - #{CONFIG[:tagline]}',
+                    center: true
+                  });
+                };
+                if (typeof(SHR4P.ready) != 'undefined' && SHR4P.ready) {
+                  SHR4P.onready();
+                }
+              });
+            END
+          end
+          script(:src => CONFIG[:shareaholic_plugin]) {}
         end
-        script(:src => CONFIG[:shareaholic_plugin]) {}
 
         script do
           self <<<<-"END"
@@ -376,18 +379,20 @@ module Kalimba::Views
             });
           END
         end
-        script do
-          self <<<<-'END'
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-15045445-6']);
-            _gaq.push(['_trackPageview']);
+        if CONFIG[:google_analytics_key]
+          script do
+            self <<<<-"END"
+              var _gaq = _gaq || [];
+              _gaq.push(['_setAccount', '#{CONFIG[:google_analytics_key]}']);
+              _gaq.push(['_trackPageview']);
 
-            (function() {
-              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-         END
+              (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+              })();
+           END
+          end
         end
       end
 
@@ -445,7 +450,7 @@ module Kalimba::Views
         end
       end
     end
-    div.like {'<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fkalimba.embed.ly&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe>'}
+    div.like {CONFIG[:fblike_fragment]}
     div.clear {}
     div.shr {}
     div.clear {}
@@ -456,7 +461,7 @@ module Kalimba::Views
       self << ' | '
       a 'Embedly', :href => 'http://embed.ly'
       self << ' | '
-      a 'Feedback', :href => 'mailto:bob@embed.ly'
+      a 'Feedback', :href => "mailto:#{CONFIG[:author_email]}"
       self << ' | '
       a '@doki_pen', :href => 'http://twitter.com/doki_pen'
     end

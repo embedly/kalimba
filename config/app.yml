@@ -1,11 +1,16 @@
+:embedly_key: ''   # TODO :required:
+:canonical_url: '' # TODO :required:
+:author_email: ''  # TODO :required:
+
+:shareaholic_key: null      # TODO
+:short_url: null            # TODO
+:google_analytics_key: null # TODO
+:fblike_fragment: null      # TODO
+
+:rate_limit: 60
+:image_root: 'http://static.embed.ly/images/kalimba'
 :tagline: "Embedly Colored Glasses for Hacker News"
 :top_comment: true
-:embedly_key: '' # TODO
-:image_root: 'http://static.embed.ly/images/kalimba'
 :hn_root: 'http://news.ycombinator.com'
 :shareaholic_plugin: 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js'
-:shareaholic_key: '' # TODO
 :google_api: 'http://ajax.googleapis.com/ajax/libs'
-:rate_limit: 60
-:canonical_url: '' # TODO
-:short_url: '' # TODO

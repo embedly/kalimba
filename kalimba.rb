@@ -22,6 +22,7 @@ EMBEDLY_KEY = '409326e2259411e088ae4040f9f86dcd'
 IMAGE_ROOT = 'http://static.embed.ly/images/kalimba'
 HN_ROOT = 'http://news.ycombinator.com'
 GOOGLE_API = 'http://ajax.googleapis.com/ajax/libs'
+RATE_LIMIT = 60 # seconds between updates
 
 #module Kalimba
 #  include Camping::Session
@@ -41,6 +42,8 @@ module Kalimba::Models
       Article.normalize_url("user?id=#{self.author}")
     end
   end
+
+  class Update < Base; end
 
   class Preview < Base
 
@@ -141,10 +144,23 @@ module Kalimba::Models
       remove_column Article.table_name, :top_comment_points
     end
   end
+
+  class AddRateLimit < V 0.4
+    def self.up
+      create_table Update.table_name do |t|
+        t.string :caller
+        t.timestamps
+      end
+    end
+
+    def self.down
+      drop_table Update.table_name
+    end
+  end
 end
 
 module Kalimba::Controllers
-  class Index < R '/'
+  class Index
     def get
       @articles = []
       Article::find(:all, :order => 'id').each do |a|
@@ -160,8 +176,16 @@ module Kalimba::Controllers
   class Update < R '/update'
     def get
 
+      last_update = Kalimba::Models::Update.find(:last)
+      if RATE_LIMIT and last_update and
+          last_update.created_at + RATE_LIMIT.seconds > Time.now
+        puts 'rate limited'
+        redirect R(Index)
+        return
+      end
+
       articles = []
-      doc = Hpricot(open('http://news.ycombinator.com/'))
+      doc = Hpricot(open(HN_ROOT))
       (doc/'.subtext/..').each do |subtext|
         article = subtext.previous_node
         articles << {
@@ -208,7 +232,7 @@ module Kalimba::Controllers
 
       Article.delete_all
       Article.create articles
-
+      Kalimba::Models::Update.create :caller => @request.env['REMOTE_ADDR']
 
       redirect R(Index)
     end

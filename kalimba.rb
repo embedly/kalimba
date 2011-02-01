@@ -259,23 +259,26 @@ module Kalimba::Views
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
         script(:src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
-        script(:src => 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js') {}
+        script do
+          self <<<<-"END"
+            SHRSB_Globals = {src: 'http://www.shareaholic.com'};
+            SHRSB_Settings = {
+              'shr': {
+                mode: 'inject',
+                service: '202,7,5,40,2,52,3',
+                apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
+                link: "http://hn.embed.ly",
+                short_link: 'http://bit.ly/ecDrFU',
+                title: 'Kalimba - #{TAGLINE}',
+                center: true
+              }
+            };
+          END
+        end
+
         script do
           self <<<<-"END"
             jQuery(document).ready(function($) {
-              try {
-                SHR4P_init();
-                $('.shr').shareaholic_publishers({
-                  mode: 'inject',
-                  service: '202,7,5,40,2,52,3',
-                  apikey: '125a4396e029dfd0ff073b5b3d2b4ca66',
-                  link: "http://hn.embed.ly",
-                  short_link: 'http://bit.ly/ecDrFU',
-                  title: 'Kalimba - #{TAGLINE}',
-                  center: true
-                });
-              } catch (e) {}
-
               $('.top_comment_link').click(function(event) {
                 event.preventDefault();
                 $(this).parent().find('.top_comment').toggle('fast');
@@ -388,6 +391,7 @@ module Kalimba::Views
             })();
          END
         end
+        script(:src => 'http://greenspaces.in/blog/wp-content/plugins/sexybookmarks/js/shareaholic-publishers.js?ver=3.3.2') {}
       end
 
       body do

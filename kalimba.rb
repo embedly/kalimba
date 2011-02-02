@@ -231,7 +231,7 @@ module Kalimba::Controllers
           f.link :href => CONFIG[:canonical_url]
           f.id CONFIG[:canonical_url]
           f.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
-          f.description CONFIG[:tagline]
+          f.subtitle CONFIG[:tagline]
           f.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
           f.author do |a|
             a.name CONFIG[:author_name]
@@ -244,8 +244,8 @@ module Kalimba::Controllers
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
             f.entry do |i|
               i.title a.title
-              i.link a.link, :rel => 'alternative', :type => 'text/html'
-              i.comments a.comments
+              i.link :href => a.link, :rel => 'alternative', :type => 'text/html'
+              #i.comments a.comments
               i.id a.link
               if preview_row
                 i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")

@@ -260,9 +260,7 @@ module Kalimba::Controllers
               end
               content = render(:_content, preview) if preview
               if content
-                i.content do |c|
-                  c.cdata! content
-                end
+                i.content content, :type => 'html'
               end
               i.description preview.description if preview
               i.summary preview.description if preview

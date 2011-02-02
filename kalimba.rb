@@ -230,7 +230,7 @@ module Kalimba::Controllers
           f.title 'Kalimba'
           f.link :href => CONFIG[:canonical_url]
           id = CONFIG[:canonical_url]
-          id = "#{url}/" unless url.end_with?'/'
+          id = "#{id}/" unless id.end_with?'/'
           f.id id
           f.link :rel => 'self', :type => 'application/atom+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
           f.subtitle CONFIG[:tagline]
@@ -248,7 +248,7 @@ module Kalimba::Controllers
               i.title a.title
               i.link :href => a.link, :rel => 'alternative', :type => 'text/html'
               id = Article.normalize_url(a.link)
-              id = "#{url}/" unless url.end_with?'/'
+              id = "#{id}/" unless id.end_with?'/'
               i.id id
               if preview_row
                 i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")

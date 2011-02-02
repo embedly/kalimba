@@ -1,13 +1,5 @@
-require 'camping'
-require 'embedly'
-require 'open-uri'
-require 'hpricot'
-require 'json'
-require 'digest/sha1'
-require 'ostruct'
-require 'sass'
-require 'yaml'
-require 'cgi'
+%w{camping embedly open-uri hpricot json digest/sha1 ostruct sass
+   yaml rss/maker}.each {|r| require r}
 
 # PUNK
 class OpenStruct
@@ -23,6 +15,7 @@ CONFIG = YAML.load(File.read('config/app.yml'))
 module Kalimba::Models
   class Article < Base
     def self.normalize_url link
+      link = CGI.unescape(link)
       if link !~ /^http/
         "#{CONFIG[:hn_root]}/#{link}"
       else
@@ -228,6 +221,43 @@ module Kalimba::Controllers
     end
   end
 
+  class Rss < R "/atom.xml"
+    def get
+      last_update = Kalimba::Models::Update.find(:last)
+      if last_update
+        @headers['Content-Type'] = 'text/xml; charset=utf-8'
+        b = Builder::XmlMarkup.new :indent => 2
+        b.instruct!
+        b.rss(
+            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
+            'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+            'xmlns:content' => 'http://purl.org/rss/1.0/modules/content/',
+            'version' => '2.0') do |r|
+          r.channel do |c|
+            c.title 'Kalimba'
+            c.link CONFIG[:canonical_url]
+            c.atom(:link, :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}")
+            c.description CONFIG[:tagline]
+            c.lastBuildDate last_update.created_at
+          end
+          Article::find(:all, :order => 'id').each do |a|
+            preview_row = Preview.find_preview(Article.normalize_url(a.link))
+            preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
+            r.item do |i|
+              i.title a.title
+              i.link a.link
+              i.comments a.comments
+              i.dc(:creator, a.author)
+              content = render(:_content, preview) if preview
+              i.content(:encoded, content) if content
+              i.description preview.description if preview
+            end
+          end
+        end
+      end
+    end
+  end
+
   # dummies to make links
   class Image < R "#{CONFIG[:image_root]}/(.*)"; end
   class HackerNews < R "#{CONFIG[:hn_root]}/(.*)"; end
@@ -244,6 +274,7 @@ module Kalimba::Views
         link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
+        link :rel => 'alternative', :type => 'application/rss+xml', :title => 'Kalimba RSS Feed', :href => "#{CONFIG[:canonical_url]}#{R(Rss)}"
         meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
@@ -468,11 +499,7 @@ module Kalimba::Views
     end
   end
 
-  def _content article, preview
-    div.embedly_title do
-      a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
-    end
-
+  def _content preview
     case preview.type
     when 'image'
       a.embedly_thumbnail(:href => preview.original_url) do
@@ -524,7 +551,12 @@ module Kalimba::Views
   end
 
   def _embed article, preview
-    div.embedly { _content article, preview }
+    div.embedly do
+      div.embedly_title do
+        a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+      end
+      _content preview
+    end
   end
 end
 

@@ -1,5 +1,4 @@
-%w{camping embedly open-uri hpricot json digest/sha1 ostruct sass
-   yaml rss/maker}.each {|r| require r}
+%w{camping embedly open-uri hpricot json digest/sha1 ostruct sass yaml builder}.each {|r| require r}
 
 # PUNK
 class OpenStruct
@@ -225,7 +224,7 @@ module Kalimba::Controllers
       last_update = Kalimba::Models::Update.find(:last)
       if last_update
         @headers['Content-Type'] = 'text/xml; charset=utf-8'
-        b = Builder::XmlMarkup.new :indent => 2
+        b = ::Builder::XmlMarkup.new :indent => 2
         b.instruct!
         b.rss(
             'xmlns' => 'http://www.w3.org/2005/Atom',
@@ -237,7 +236,6 @@ module Kalimba::Controllers
             c.id CONFIG[:canonical_url]
             c.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
             c.description CONFIG[:tagline]
-            c.lastBuildDate last_update.created_at
             c.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
             c.author do |a|
               a.name CONFIG[:author_name]
@@ -254,12 +252,19 @@ module Kalimba::Controllers
               i.link a.link, :rel => 'alternative', :type => 'text/html'
               i.comments a.comments
               i.id a.link
+              if preview_row
+                i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+                i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+              else
+                i.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+                i.published last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+              end
               i.author do |author|
                 author.name a.author
                 author.uri a.author_link
               end
               content = render(:_content, preview) if preview
-              i.content(:encoded, content) if content
+              i.content content if content
               i.description preview.description if preview
               i.summary preview.description if preview
             end

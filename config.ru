@@ -1,3 +1,5 @@
+gem 'builder', '< 3.0'
+
 require 'kalimba'
 require 'fileutils'
 

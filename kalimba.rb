@@ -223,7 +223,7 @@ module Kalimba::Controllers
     def get
       last_update = Kalimba::Models::Update.find(:last)
       if last_update
-        @headers['Content-Type'] = 'text/xml; charset=utf-8'
+        @headers['Content-Type'] = 'application/atom+xml; charset=utf-8'
         b = ::Builder::XmlMarkup.new :indent => 2
         b.instruct!
         b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|

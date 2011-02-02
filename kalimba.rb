@@ -226,10 +226,7 @@ module Kalimba::Controllers
         @headers['Content-Type'] = 'text/xml; charset=utf-8'
         b = ::Builder::XmlMarkup.new :indent => 2
         b.instruct!
-        b.rss(
-            'xmlns' => 'http://www.w3.org/2005/Atom',
-            'xmlns:content' => 'http://purl.org/rss/1.0/modules/content/',
-            'version' => '2.0') do |r|
+        b.rss('xmlns' => 'http://www.w3.org/2005/Atom', 'version' => '2.0') do |r|
           r.channel do |c|
             c.title 'Kalimba'
             c.link :href => CONFIG[:canonical_url]

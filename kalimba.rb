@@ -229,7 +229,9 @@ module Kalimba::Controllers
         b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|
           f.title 'Kalimba'
           f.link :href => CONFIG[:canonical_url]
-          f.id CONFIG[:canonical_url]
+          id = CONFIG[:canonical_url]
+          id = "#{url}/" unless url.end_with?'/'
+          f.id id
           f.link :rel => 'self', :type => 'application/atom+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
           f.subtitle CONFIG[:tagline]
           f.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
@@ -245,11 +247,14 @@ module Kalimba::Controllers
             f.entry do |i|
               i.title a.title
               i.link :href => a.link, :rel => 'alternative', :type => 'text/html'
-              #i.comments a.comments
-              i.id Article.normalize_url(a.link)
+              id = Article.normalize_url(a.link)
+              id = "#{url}/" unless url.end_with?'/'
+              i.id id
               if preview_row
+                i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
                 i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
               else
+                i.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
                 i.published last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
               end
               i.author do |author|
@@ -260,7 +265,9 @@ module Kalimba::Controllers
               if content
                 i.content content, :type => 'html'
               end
-              i.summary preview.description if preview
+              if preview
+                i.summary preview.description, :type => 'html'
+              end
             end
           end
         end

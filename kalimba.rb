@@ -291,7 +291,11 @@ module Kalimba::Views
         link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
-        link :rel => 'alternative', :type => 'application/rss+xml', :title => 'Kalimba RSS Feed', :href => R(Rss)
+        if CONFIG[:rss]
+          link :rel => 'alternative', :type => 'application/rss+xml', :title => 'Kalimba Feedburner RSS Feed', :href => CONFIG[:rss]
+        else
+          link :rel => 'alternative', :type => 'application/atom+xml', :title => 'Kalimba Atom Feed', :href => R(Rss)
+        end
         meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'

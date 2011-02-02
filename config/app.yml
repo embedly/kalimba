@@ -1,6 +1,8 @@
 :embedly_key: ''   # TODO :required:
 :canonical_url: '' # TODO :required:
 :author_email: ''  # TODO :required:
+:author_name: ''   # TODO :required:
+:author_uri: ''    # TODO :required'
 
 :shareaholic_key: null      # TODO
 :short_url: null            # TODO

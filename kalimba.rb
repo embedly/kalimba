@@ -283,7 +283,7 @@ end
 
 module Kalimba::Views
   def layout
-    html do
+    xhtml_transitional do
       head do
         title { "Kalimba - #{CONFIG[:tagline]}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
@@ -295,12 +295,13 @@ module Kalimba::Views
         meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
-        script(:src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
-        script(:src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
+        script(:type => 'text/javascript', :src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
+        script(:type => 'text/javascript', :src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
 
         if CONFIG[:shareaholic_key]
-          script do
+          script :type => 'text/javascript' do
             self <<<<-"END"
+              //<![CDATA[
               jQuery(document).ready(function($) {
                 if (typeof(SHR4P) == 'undefined') {
                   SHR4P = {};
@@ -321,13 +322,15 @@ module Kalimba::Views
                   SHR4P.onready();
                 }
               });
+              //]]>
             END
           end
           script(:src => CONFIG[:shareaholic_plugin]) {}
         end
 
-        script do
+        script :type => 'text/javascript' do
           self <<<<-"END"
+            //<![CDATA[
             jQuery(document).ready(function($) {
               $('.top_comment_link').click(function(event) {
                 event.preventDefault();
@@ -426,10 +429,11 @@ module Kalimba::Views
                 }
               });
             });
+            //]]>
           END
         end
         if CONFIG[:google_analytics_key]
-          script do
+          script :type => 'text/javascript' do
             self <<<<-"END"
               var _gaq = _gaq || [];
               _gaq.push(['_setAccount', '#{CONFIG[:google_analytics_key]}']);
@@ -520,7 +524,7 @@ module Kalimba::Views
     case preview.type
     when 'image'
       a.embedly_thumbnail(:href => preview.original_url) do
-        img.thumbnail :src => preview.url
+        img.thumbnail :src => preview.url, :alt => 'goto article'
       end
     when 'video'
       video.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
@@ -536,7 +540,7 @@ module Kalimba::Views
         when 'photo'
           div.embedly_content do
             a.embedly_thumbnail :href => preview.original_url do
-              img.thumbnail :src => preview.object_url
+              img.thumbnail :src => preview.object_url, :alt => 'goto article'
             end
           end
         when 'video', 'rich'
@@ -545,7 +549,7 @@ module Kalimba::Views
           div.embedly_content do
             if preview.images.length != 0
               a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do
-                img.thumbnail :src => preview.images.first['url']
+                img.thumbnail :src => preview.images.first['url'], :alt => 'thumbnail'
               end
             end
 
@@ -560,7 +564,7 @@ module Kalimba::Views
     div.provider do
       self << 'via '
       if preview.favicon_url
-        img.provider_favicon :src => preview.favicon_url
+        img.provider_favicon :src => preview.favicon_url, :alt => 'favicon'
         self << ' '
       end
       a.provider_link preview.provider_name, :href => preview.provider_url

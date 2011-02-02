@@ -247,7 +247,7 @@ module Kalimba::Controllers
           Article::find(:all, :order => 'id').each do |a|
             preview_row = Preview.find_preview(Article.normalize_url(a.link))
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
-            r.entry do |i|
+            r.item do |i|
               i.title a.title
               i.link a.link, :rel => 'alternative', :type => 'text/html'
               i.comments a.comments

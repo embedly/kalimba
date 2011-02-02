@@ -234,22 +234,29 @@ module Kalimba::Controllers
             'version' => '2.0') do |r|
           r.channel do |c|
             c.title 'Kalimba'
-            c.link CONFIG[:canonical_url]
+            c.link :href => CONFIG[:canonical_url]
             c.atom(:link, :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}")
             c.description CONFIG[:tagline]
             c.lastBuildDate last_update.created_at
+            c.updated last_update.created_at
+            c.author do |a|
+              a.name CONFIG[:author_name]
+              a.email CONFIG[:author_email]
+            end
           end
           Article::find(:all, :order => 'id').each do |a|
             preview_row = Preview.find_preview(Article.normalize_url(a.link))
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
-            r.item do |i|
+            r.entry do |i|
               i.title a.title
               i.link a.link
               i.comments a.comments
+              i.id a.id
               i.dc(:creator, a.author)
               content = render(:_content, preview) if preview
               i.content(:encoded, content) if content
               i.description preview.description if preview
+              i.summary preview.description if preview
             end
           end
         end

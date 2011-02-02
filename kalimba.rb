@@ -246,7 +246,7 @@ module Kalimba::Controllers
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
             f.entry do |i|
               i.title a.title
-              i.link :href => a.link, :rel => 'alternative', :type => 'text/html'
+              i.link :href => a.link
               id = Article.normalize_url(a.link)
               id = "#{id}/" unless id.end_with?'/'
               i.id id

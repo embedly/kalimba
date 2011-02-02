@@ -226,7 +226,7 @@ module Kalimba::Controllers
         @headers['Content-Type'] = 'text/xml; charset=utf-8'
         b = ::Builder::XmlMarkup.new :indent => 2
         b.instruct!
-        b.rss('xmlns' => 'http://www.w3.org/2005/Atom', 'version' => '2.0') do |r|
+        b.feed('xmlns' => 'http://www.w3.org/2005/Atom', 'version' => '2.0') do |r|
           r.channel do |c|
             c.title 'Kalimba'
             c.link :href => CONFIG[:canonical_url]
@@ -244,7 +244,7 @@ module Kalimba::Controllers
           Article::find(:all, :order => 'id').each do |a|
             preview_row = Preview.find_preview(Article.normalize_url(a.link))
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
-            r.item do |i|
+            r.entry do |i|
               i.title a.title
               i.link a.link, :rel => 'alternative', :type => 'text/html'
               i.comments a.comments

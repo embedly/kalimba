@@ -228,31 +228,36 @@ module Kalimba::Controllers
         b = Builder::XmlMarkup.new :indent => 2
         b.instruct!
         b.rss(
-            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-            'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+            'xmlns' => 'http://www.w3.org/2005/Atom',
             'xmlns:content' => 'http://purl.org/rss/1.0/modules/content/',
             'version' => '2.0') do |r|
           r.channel do |c|
             c.title 'Kalimba'
             c.link :href => CONFIG[:canonical_url]
-            c.atom(:link, :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}")
+            c.id CONFIG[:canonical_url]
+            c.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
             c.description CONFIG[:tagline]
             c.lastBuildDate last_update.created_at
-            c.updated last_update.created_at
+            c.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
             c.author do |a|
               a.name CONFIG[:author_name]
               a.email CONFIG[:author_email]
+              a.email CONFIG[:author_uri]
             end
+            c.generator 'Kalimba'
           end
           Article::find(:all, :order => 'id').each do |a|
             preview_row = Preview.find_preview(Article.normalize_url(a.link))
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
             r.entry do |i|
               i.title a.title
-              i.link a.link
+              i.link a.link, :rel => 'alternative', :type => 'text/html'
               i.comments a.comments
-              i.id a.id
-              i.dc(:creator, a.author)
+              i.id a.link
+              i.author do |author|
+                author.name a.author
+                author.uri a.author_link
+              end
               content = render(:_content, preview) if preview
               i.content(:encoded, content) if content
               i.description preview.description if preview
@@ -280,7 +285,7 @@ module Kalimba::Views
         link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
-        link :rel => 'alternative', :type => 'application/rss+xml', :title => 'Kalimba RSS Feed', :href => "#{CONFIG[:canonical_url]}#{R(Rss)}"
+        link :rel => 'alternative', :type => 'application/rss+xml', :title => 'Kalimba RSS Feed', :href => R(Rss)
         meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'

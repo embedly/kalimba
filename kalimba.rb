@@ -262,7 +262,6 @@ module Kalimba::Controllers
               if content
                 i.content content, :type => 'html'
               end
-              i.description preview.description if preview
               i.summary preview.description if preview
             end
           end

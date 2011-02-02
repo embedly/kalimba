@@ -226,25 +226,23 @@ module Kalimba::Controllers
         @headers['Content-Type'] = 'text/xml; charset=utf-8'
         b = ::Builder::XmlMarkup.new :indent => 2
         b.instruct!
-        b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |r|
-          r.channel do |c|
-            c.title 'Kalimba'
-            c.link :href => CONFIG[:canonical_url]
-            c.id CONFIG[:canonical_url]
-            c.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
-            c.description CONFIG[:tagline]
-            c.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-            c.author do |a|
-              a.name CONFIG[:author_name]
-              a.email CONFIG[:author_email]
-              a.email CONFIG[:author_uri]
-            end
-            c.generator 'Kalimba'
+        b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|
+          f.title 'Kalimba'
+          f.link :href => CONFIG[:canonical_url]
+          f.id CONFIG[:canonical_url]
+          f.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
+          f.description CONFIG[:tagline]
+          f.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+          f.author do |a|
+            a.name CONFIG[:author_name]
+            a.email CONFIG[:author_email]
+            a.email CONFIG[:author_uri]
           end
+          f.generator 'Kalimba'
           Article::find(:all, :order => 'id').each do |a|
             preview_row = Preview.find_preview(Article.normalize_url(a.link))
             preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
-            r.entry do |i|
+            f.entry do |i|
               i.title a.title
               i.link a.link, :rel => 'alternative', :type => 'text/html'
               i.comments a.comments

@@ -236,7 +236,7 @@ module Kalimba::Controllers
           f.author do |a|
             a.name CONFIG[:author_name]
             a.email CONFIG[:author_email]
-            a.email CONFIG[:author_uri]
+            a.uri CONFIG[:author_uri]
           end
           f.generator 'Kalimba'
           Article::find(:all, :order => 'id').each do |a|
@@ -246,7 +246,7 @@ module Kalimba::Controllers
               i.title a.title
               i.link :href => a.link, :rel => 'alternative', :type => 'text/html'
               #i.comments a.comments
-              i.id a.link
+              i.id Article.normalize_url(a.link)
               if preview_row
                 i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
               else

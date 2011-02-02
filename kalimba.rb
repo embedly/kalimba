@@ -230,7 +230,7 @@ module Kalimba::Controllers
           f.title 'Kalimba'
           f.link :href => CONFIG[:canonical_url]
           f.id CONFIG[:canonical_url]
-          f.link :rel => 'self', :type => 'application/rss+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
+          f.link :rel => 'self', :type => 'application/atom+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
           f.subtitle CONFIG[:tagline]
           f.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
           f.author do |a|
@@ -248,10 +248,8 @@ module Kalimba::Controllers
               #i.comments a.comments
               i.id a.link
               if preview_row
-                i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
                 i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
               else
-                i.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
                 i.published last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
               end
               i.author do |author|

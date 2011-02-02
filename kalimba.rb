@@ -23,7 +23,6 @@ CONFIG = YAML.load(File.read('config/app.yml'))
 module Kalimba::Models
   class Article < Base
     def self.normalize_url link
-      link = CGI.unescape(link)
       if link !~ /^http/
         "#{CONFIG[:hn_root]}/#{link}"
       else

@@ -264,7 +264,11 @@ module Kalimba::Controllers
                 author.uri a.author_link
               end
               content = render(:_content, preview) if preview
-              i.content content if content
+              if content
+                i.content do |c|
+                  c.cdata! content
+                end
+              end
               i.description preview.description if preview
               i.summary preview.description if preview
             end

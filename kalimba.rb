@@ -451,7 +451,12 @@ module Kalimba::Views
 
       body do
         div.header do
-          div.title "KALIMBA - #{CONFIG[:tagline]}"
+          div.title do
+            self << "KALIMBA - #{CONFIG[:tagline]}"
+            a.rss_link :href => (CONFIG[:rss] or R(Rss)) do
+              img.rss :src => R(Image, 'feed-icon32x32.png'), :alt => 'rss'
+            end
+          end
         end
         div.main do
           self << yield

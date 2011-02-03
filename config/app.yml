@@ -8,6 +8,7 @@
 :short_url: null            # TODO
 :google_analytics_key: null # TODO
 :fblike_fragment: null      # TODO
+:rss: null                  # TODO
 
 :rate_limit: 60
 :image_root: 'http://static.embed.ly/images/kalimba'

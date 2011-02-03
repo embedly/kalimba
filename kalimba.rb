@@ -178,6 +178,12 @@ module Kalimba::Controllers
         return
       end
 
+      # clean cache
+      Preview.where("created_at < :expiration", 
+                    :expiration => Time.now - 2.days).each do |r|
+        r.delete
+      end
+
       articles = []
       doc = Hpricot(open(CONFIG[:hn_root]))
       (doc/'.subtext/..').each do |subtext|

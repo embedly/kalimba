@@ -1,12 +1,5 @@
 %w{camping embedly open-uri hpricot json digest/sha1 ostruct sass yaml builder}.each {|r| require r}
 
-# PUNK
-class OpenStruct
-  def type
-    method_missing :type
-  end
-end
-
 Camping.goes :Kalimba
 
 CONFIG = YAML.load(File.read('config/app.yml'))
@@ -167,7 +160,7 @@ module Kalimba::Controllers
       @articles = []
       Article::find(:all, :order => 'id').each do |a|
         preview_row = Preview.find_preview(Article.normalize_url(a.link))
-        preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
+        preview = ::Embedly::EmbedlyObject.new(JSON.parse(preview_row.value)) if preview_row
         @articles << [a, preview]
       end
 
@@ -456,7 +449,7 @@ module Kalimba::Views
           p { preview.content }
         end
       else
-        case preview.object['type']
+        case preview.object.type
         when 'photo'
           div.embedly_content do
             a.embedly_thumbnail :href => preview.original_url do

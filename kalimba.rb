@@ -477,6 +477,25 @@ module Kalimba::Views
     end
   end
 
+  def _rss_content article, preview
+    _content preview
+    div do
+      self << "#{article.points} points by "
+      a article.author, :href => article.author_link
+      self << " | "
+      a "#{article.comment_count} comments", :href => article.comments
+      if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
+        div do
+          div do
+            self << "#{article.top_comment_points} points by "
+            a article.top_comment_author, :href => R(HackerNews, "user?id=#{article.top_comment_author}")
+          end
+          div { article.top_comment_content }
+        end
+      end
+    end
+  end
+
   def _rss
     if @last_update
       self << @b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|
@@ -512,7 +531,7 @@ module Kalimba::Views
               author.name article.author
               author.uri article.author_link
             end
-            content = render(:_content, preview) if preview
+            content = render(:_rss_content, article, preview) if preview
             if content
               i.content content, :type => 'html'
             end

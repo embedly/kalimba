@@ -33,6 +33,25 @@ body, select, input, textarea {
       position: relative;
       top: -3px; }
 
+#shortcuts {
+  display: none; }
+
+#facebox h2 {
+  font-size: 18px;
+  font-weight: bold; }
+#facebox dl.shortcut {
+  width: 480px;
+  line-height: 2.2em;
+  font-size: 14px; }
+  #facebox dl.shortcut dt {
+    width: 120px;
+    display: inline-block;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 10px; }
+  #facebox dl.shortcut dd {
+    display: inline; }
+
 .main {
   line-height: 14px;
   font-size: 11px;
@@ -50,6 +69,8 @@ body, select, input, textarea {
     margin-right: auto; }
     .main .footer a {
       font-weight: normal; }
+    .main .footer a[name=keys] {
+      cursor: pointer; }
   .main a {
     color: black;
     text-decoration: none;

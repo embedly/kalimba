@@ -219,6 +219,27 @@ module Kalimba::Controllers
     end
   end
 
+  class KeysJs < R "/media/js/keys.js"
+    def get
+      @headers['Content-Type'] = 'text/javascript'
+      render :_keys_js
+    end
+  end
+
+  class ShareaholicJs < R "/media/js/shareaholic.js"
+    def get
+      @headers['Content-Type'] = 'text/javascript'
+      render :_shareaholic_js
+    end
+  end
+
+  class AnalyticsJs < R "/media/js/analytics.js"
+    def get
+      @headers['Content-Type'] = 'text/javascript'
+      render :_analytics_js
+    end
+  end
+
   class Rss < R "/atom.xml"
     def get
       last_update = Kalimba::Models::Update.find(:last)
@@ -277,6 +298,8 @@ module Kalimba::Controllers
 
   # dummies to make links
   class Image < R "#{CONFIG[:image_root]}/(.*)"; end
+  class Javascript < R "#{CONFIG[:js_root]}/(.*)"; end
+  class Css < R "#{CONFIG[:css_root]}/(.*)"; end
   class HackerNews < R "#{CONFIG[:hn_root]}/(.*)"; end
   class GoogleApi < R "#{CONFIG[:google_api]}/(.*)"; end
 end
@@ -288,6 +311,7 @@ module Kalimba::Views
         title { "Kalimba - #{CONFIG[:tagline]}" }
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
+        link :href => R(Css, 'facebox.css'), :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
@@ -301,155 +325,16 @@ module Kalimba::Views
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
         script(:type => 'text/javascript', :src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
         script(:type => 'text/javascript', :src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
+        script(:type => 'text/javascript', :src => R(Javascript, 'facebox.js')) {}
+        script(:type => 'text/javascript', :src => R(KeysJs)) {}
 
         if CONFIG[:shareaholic_key]
-          script :type => 'text/javascript' do
-            self <<<<-"END"
-              //<![CDATA[
-              jQuery(document).ready(function($) {
-                if (typeof(SHR4P) == 'undefined') {
-                  SHR4P = {};
-                }
-                SHR4P.onready = function() {
-                  SHR4P.jQuery('.shr').shareaholic_publishers({
-                    mode: 'inject',
-                    showShareCount: true,
-                    service: '202,7,5,40,2,52,3',
-                    apikey: '#{CONFIG[:shareaholic_key]}',
-                    link: "#{CONFIG[:canonical_url]}",
-                    short_link: '#{CONFIG[:short_url]}',
-                    title: 'Kalimba - #{CONFIG[:tagline]}',
-                    center: true
-                  });
-                };
-                if (typeof(SHR4P.ready) != 'undefined' && SHR4P.ready) {
-                  SHR4P.onready();
-                }
-              });
-              //]]>
-            END
-          end
-          script(:src => CONFIG[:shareaholic_plugin]) {}
+          script(:type => 'text/javascript', :src => R(SharaholicJs)) {}
+          script(:type => 'text/javascript', :src => CONFIG[:shareaholic_plugin]) {}
         end
 
-        script :type => 'text/javascript' do
-          self <<<<-"END"
-            //<![CDATA[
-            jQuery(document).ready(function($) {
-              $('.top_comment_link').click(function(event) {
-                event.preventDefault();
-                $(this).parent().find('.top_comment').toggle('fast');
-              });
-
-              var index = -1; // so first is 1
-
-              var current = function() {
-                return $('a[name='+(index+1)+']').parent();
-              }
-              var up = function() {
-                if (index > 0) {
-                  index--;
-                  index %= 30;
-                  document.location.href = '#'+(index+1);
-                  highlight();
-                }
-              }
-              var down = function() {
-                if (index < 29) {
-                  index++;
-                  index %= 30;
-                  document.location.href = '#'+(index+1);
-                  highlight();
-                }
-              }
-              var toggle_content = function() {
-                if (index < 30 && index >= 0) {
-                  current().find('.embedly_content').toggle('fast')
-                }
-              }
-              var toggle_comments = function() {
-                if (index < 30 && index >= 0) {
-                  current().find('.top_comment').toggle('fast')
-                }
-              }
-              var follow = function(shift) {
-                var href = current().find('.embedly_title').find('a').last().attr('href');
-                if (shift) {
-                  window.open(href);
-                } else {
-                  document.location.href = href;
-                }
-              }
-              var highlight = function() {
-                $('.article_rank').removeClass('selected');
-                if (index < 30 && index >= 0) {
-                  current().find('.article_rank').addClass('selected');
-                }
-              }
-
-              if (document.location.hash) {
-                index = document.location.hash.substring(1) - 1;
-                highlight();
-              }
-
-              $(document).keypress(function(event) {
-                switch(event.which) {
-                case 106: // j
-                  event.preventDefault();
-                  down();
-                  break;
-                case 107: // k
-                  event.preventDefault();
-                  up();
-                  break;
-                case 99:  // c
-                  event.preventDefault();
-                  toggle_comments();
-                  break;
-                case 100: // d
-                  event.preventDefault();
-                  toggle_content();
-                  break;
-                case 13:  // enter
-                  event.preventDefault();
-                  follow(event.shiftKey);
-                default:
-                  break;
-                }
-              });
-
-              // for arrows
-              $(document).keyup(function(event) {
-                switch(event.keyCode) {
-                case 39:  // down arrow
-                  event.preventDefault();
-                  down();
-                  break;
-                case 37:  // up arrow
-                  event.preventDefault();
-                  up();
-                default:
-                  break;
-                }
-              });
-            });
-            //]]>
-          END
-        end
         if CONFIG[:google_analytics_key]
-          script :type => 'text/javascript' do
-            self <<<<-"END"
-              var _gaq = _gaq || [];
-              _gaq.push(['_setAccount', '#{CONFIG[:google_analytics_key]}']);
-              _gaq.push(['_trackPageview']);
-
-              (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-              })();
-           END
-          end
+          script(:type => 'text/javascript', :src => R(AnalyticsJs)) {}
         end
       end
 
@@ -526,6 +411,45 @@ module Kalimba::Views
       a 'Feedback', :href => "mailto:#{CONFIG[:author_email]}"
       self << ' | '
       a '@doki_pen', :href => 'http://twitter.com/doki_pen'
+      self << ' | '
+      a 'Shortcuts', :name => 'keys'
+    end
+
+    div.shortcuts! do
+      h2 'Keyboard Shortcuts'
+      hr
+      dl.shortcut do
+        dt { 'j or &#8594;' }
+        dd 'Select next article'
+      end
+      dl.shortcut do
+        dt { 'k or &#8592;' }
+        dd 'Select previous article'
+      end
+      dl.shortcut do
+        dt 'c'
+        dd 'Toggle Hacker News top comment'
+      end
+      dl.shortcut do
+        dt 'shift + c'
+        dd 'Open Hacker News comments page in a new window'
+      end
+      dl.shortcut do
+        dt 'd'
+        dd 'Toggle article content'
+      end
+      dl.shortcut do
+        dt 'enter'
+        dd 'Follow the article link in this window'
+      end
+      dl.shortcut do
+        dt 'shift + enter'
+        dd 'Follow the article link in a new window'
+      end
+      dl.shortcut do
+        dt '?'
+        dd 'Show this keyboard shortcuts dialog'
+      end
     end
   end
 
@@ -587,6 +511,174 @@ module Kalimba::Views
       end
       _content preview
     end
+  end
+
+  def _keys_js
+    self <<<<-"END"
+jQuery(document).ready(function($) {
+  $('.top_comment_link').click(function(event) {
+    event.preventDefault();
+    $(this).parent().find('.top_comment').toggle('fast');
+  });
+
+  $.facebox.settings.loadingImage = '#{R(Image, 'loading.gif')}'
+  $.facebox.settings.closeImage = '#{R(Image, 'closelabel.png')}'
+  $.facebox.settings.opacity = 0.2
+  $.facebox.settings.faceboxHtml = '\
+    <div id="facebox" style="display:none;"> \
+      <div class="popup"> \
+        <div class="content"> \
+        </div> \
+        <a href="#" class="close"><img src="#{R(Image, 'closelabel.png')}" title="close" class="close_image" /></a> \
+      </div> \
+    </div>'
+
+  function State() {
+    this.index = -1
+    this.max = $('ul.article_list > li.article').size();
+    this.toggle = 'fast';
+  }
+
+  State.prototype.current = function() {
+    return $('a[name='+(this.index+1)+']').parent();
+  }
+
+  State.prototype.inRange = function() {
+    return this.index >= 0 && this.index < this.max
+  }
+
+  State.prototype.up = function() {
+    if (this.index > 0) {
+      this.index--;
+      this.index %= this.max;
+      this.highlight();
+    }
+  }
+  State.prototype.down = function() {
+    if (this.index < this.max - 1) {
+      this.index++;
+      this.index %= this.max;
+      this.highlight();
+    }
+  }
+  State.prototype.toggle_content = function() {
+    if (this.inRange()) {
+      this.current().find('.embedly_content').toggle(this.toggle)
+    }
+  }
+  State.prototype.toggle_comments = function() {
+    if (this.inRange()) {
+      this.current().find('.top_comment').toggle(this.toggle)
+    }
+  }
+  State.prototype.goto_comments = function() {
+    if (this.inRange()) {
+      window.open(this.current().find('.comment_link').attr('href'))
+    }
+  }
+  State.prototype.follow = function(shift) {
+    if (this.inRange()) {
+      var href = this.current().find('.embedly_title').find('a').last().attr('href');
+      if (shift) {
+        window.open(href);
+      } else {
+        document.location.href = href;
+      }
+    }
+  }
+  State.prototype.highlight = function() {
+    $('.article_rank').removeClass('selected');
+    if (this.inRange()) {
+      state.current().find('.article_rank').addClass('selected');
+      document.location.href = '#'+(this.index+1);
+    }
+  }
+  State.prototype.help = function() {
+    $.facebox({div: '#shortcuts'});
+  }
+  var state = new State();
+
+  // keypress mappings
+  var KEYS = {
+    106: 'down',            // j
+    107: 'up',              // k
+    99:  'toggle_comments', // c
+    67:  'goto_comments',   // C
+    100: 'toggle_content',  // d
+    13:  'follow',          // enter
+    63:  'help'             // ?
+  }
+  // keyup mappings
+  var ARROWS = {
+    37:  'up',              // up arrow
+    39:  'down'             // down arrow
+  }
+
+  $(document).keypress(function(event) {
+    var command = KEYS[event.which];
+    if (command) {
+      event.preventDefault();
+      state[command](event.shiftKey);
+    }
+  });
+
+  $(document).keyup(function(event) {
+    var command = ARROWS[event.keyCode];
+    if (command) {
+      event.preventDefault();
+      state[command](event.shiftKey);
+    }
+  });
+
+  $('a[name=keys]').click(function() {
+    state.help();
+  });
+
+  if (document.location.hash) {
+    state.index = document.location.hash.substring(1) - 1;
+    state.highlight();
+  }
+});
+    END
+  end
+
+  def _shareaholic_js
+    self <<<<-"END"
+jQuery(document).ready(function($) {
+  if (typeof(SHR4P) == 'undefined') {
+    SHR4P = {};
+  }
+  SHR4P.onready = function() {
+    SHR4P.jQuery('.shr').shareaholic_publishers({
+      mode: 'inject',
+      showShareCount: true,
+      service: '202,7,5,40,2,52,3',
+      apikey: '#{CONFIG[:shareaholic_key]}',
+      link: "#{CONFIG[:canonical_url]}",
+      short_link: '#{CONFIG[:short_url]}',
+      title: 'Kalimba - #{CONFIG[:tagline]}',
+      center: true
+    });
+  };
+  if (typeof(SHR4P.ready) != 'undefined' && SHR4P.ready) {
+    SHR4P.onready();
+  }
+});
+    END
+  end
+
+  def _analytics_js
+    self <<<<-"END"
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', '#{CONFIG[:google_analytics_key]}']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+    END
   end
 end
 

@@ -156,6 +156,7 @@ end
 module Kalimba::Controllers
   class Index
     def get
+      raise 'Failure' if @input.fail # for testing
       @shortcuts_on = true
       @articles = []
       Article::find(:all, :order => 'id').each do |a|

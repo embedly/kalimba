@@ -28,6 +28,10 @@ body, select, input, textarea {
     padding-left: 35px;
     vertical-align: middle;
     font-size: 20px; }
+    .header .title .rss_link {
+      float: right;
+      position: relative;
+      top: -3px; }
 
 .main {
   line-height: 14px;

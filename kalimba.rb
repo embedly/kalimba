@@ -350,7 +350,7 @@ module Kalimba::Views
                   div.comment_head do
                     self << "#{article.top_comment_points} points by "
                     a.top_comment_author article.top_comment_author,
-                      :href => R(HackerNews, "user?id=#{article.top_comment_author}")
+                      :href => R(HackerNews, "user", :id=> article.top_comment_author)
                   end
                   div.comment_content { article.top_comment_content }
                 end
@@ -492,7 +492,7 @@ module Kalimba::Views
       div do
         div do
           self << "#{article.top_comment_points} points by "
-          a article.top_comment_author, :href => R(HackerNews, "user?id=#{article.top_comment_author}")
+          a article.top_comment_author, :href => R(HackerNews, "user", :id => article.top_comment_author)
         end
         br
         div { article.top_comment_content }

@@ -242,57 +242,21 @@ module Kalimba::Controllers
 
   class Rss < R "/atom.xml"
     def get
-      last_update = Kalimba::Models::Update.find(:last)
-      if last_update
-        @headers['Content-Type'] = 'application/atom+xml; charset=utf-8'
-        b = ::Builder::XmlMarkup.new :indent => 2
-        b.instruct!
-        b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|
-          f.title 'Kalimba'
-          f.link :href => CONFIG[:canonical_url]
-          id = CONFIG[:canonical_url]
-          id = "#{id}/" unless id.end_with?'/'
-          f.id id
-          f.link :rel => 'self', :type => 'application/atom+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
-          f.subtitle CONFIG[:tagline]
-          f.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-          f.author do |a|
-            a.name CONFIG[:author_name]
-            a.email CONFIG[:author_email]
-            a.uri CONFIG[:author_uri]
-          end
-          f.generator 'Kalimba'
-          Article::find(:all, :order => 'id').each do |a|
-            preview_row = Preview.find_preview(Article.normalize_url(a.link))
-            preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
-            f.entry do |i|
-              i.title a.title
-              i.link a.link, :href => a.link
-              id = Article.normalize_url(a.link)
-              id = "#{id}/" unless id.end_with?'/'
-              i.id id
-              if preview_row
-                i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-                i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-              else
-                i.updated last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-                i.published last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
-              end
-              i.author do |author|
-                author.name a.author
-                author.uri a.author_link
-              end
-              content = render(:_content, preview) if preview
-              if content
-                i.content content, :type => 'html'
-              end
-              if preview
-                i.summary preview.description, :type => 'html'
-              end
-            end
-          end
-        end
+      @last_update = Kalimba::Models::Update.find(:last)
+      return unless @last_update
+
+      @articles = []
+      Article::find(:all, :order => 'id').each do |a|
+        preview_row = Preview.find_preview(Article.normalize_url(a.link))
+        preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
+        @articles << [a, preview_row, preview]
       end
+
+      @headers['Content-Type'] = 'application/atom+xml; charset=utf-8'
+      @b = ::Builder::XmlMarkup.new :indent => 2
+      @b.instruct!
+
+      render :_rss
     end
   end
 
@@ -513,6 +477,54 @@ module Kalimba::Views
     end
   end
 
+  def _rss
+    if @last_update
+      self << @b.feed('xmlns' => 'http://www.w3.org/2005/Atom') do |f|
+        f.title 'Kalimba'
+        f.link :href => CONFIG[:canonical_url]
+        id = CONFIG[:canonical_url]
+        id = "#{id}/" unless id.end_with?'/'
+        f.id id
+        f.link :rel => 'self', :type => 'application/atom+xml', :href=> "#{CONFIG[:canonical_url]}#{R(Rss)}"
+        f.subtitle CONFIG[:tagline]
+        f.updated @last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+        f.author do |a|
+          a.name CONFIG[:author_name]
+          a.email CONFIG[:author_email]
+          a.uri CONFIG[:author_uri]
+        end
+        f.generator 'Kalimba'
+        @articles.each do |article, preview_row, preview|
+          f.entry do |i|
+            i.title article.title
+            i.link article.link, :href => Kalimba::Models::Article.normalize_url(article.link)
+            id = Kalimba::Models::Article.normalize_url(article.link)
+            id = "#{id}/" unless id.end_with?'/'
+            i.id id
+            if preview_row
+              i.updated preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+              i.published preview_row.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+            else
+              i.updated @last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+              i.published @last_update.created_at.utc.strftime("%Y-%m-%dT%H:%S:%MZ")
+            end
+            i.author do |author|
+              author.name article.author
+              author.uri article.author_link
+            end
+            content = render(:_content, preview) if preview
+            if content
+              i.content content, :type => 'html'
+            end
+            if preview
+              i.summary preview.description, :type => 'html'
+            end
+          end
+        end
+      end
+    end
+  end
+
   def _keys_js
     self <<<<-"END"
 jQuery(document).ready(function($) {
@@ -680,6 +692,7 @@ _gaq.push(['_trackPageview']);
 })();
     END
   end
+
 end
 
 def Kalimba.create

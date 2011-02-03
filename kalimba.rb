@@ -163,6 +163,7 @@ end
 module Kalimba::Controllers
   class Index
     def get
+      @shortcuts_on = true
       @articles = []
       Article::find(:all, :order => 'id').each do |a|
         preview_row = Preview.find_preview(Article.normalize_url(a.link))
@@ -344,8 +345,10 @@ module Kalimba::Views
             a 'Feedback', :href => "mailto:#{CONFIG[:author_email]}"
             self << ' | '
             a '@doki_pen', :href => 'http://twitter.com/doki_pen'
-            self << ' | '
-            a 'Shortcuts', :name => 'keys'
+            if @shortcuts_on
+              self << ' | '
+              a 'Shortcuts', :name => 'keys'
+            end
           end
         end
       end

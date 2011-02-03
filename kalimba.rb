@@ -479,19 +479,23 @@ module Kalimba::Views
 
   def _rss_content article, preview
     _content preview
+    br
+
     div do
       self << "#{article.points} points by "
       a article.author, :href => article.author_link
       self << " | "
       a "#{article.comment_count} comments", :href => article.comments
-      if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
+    end
+
+    if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
+      br
+      div do
         div do
-          div do
-            self << "#{article.top_comment_points} points by "
-            a article.top_comment_author, :href => R(HackerNews, "user?id=#{article.top_comment_author}")
-          end
-          div { article.top_comment_content }
+          self << "#{article.top_comment_points} points by "
+          a article.top_comment_author, :href => R(HackerNews, "user?id=#{article.top_comment_author}")
         end
+        div { article.top_comment_content }
       end
     end
   end

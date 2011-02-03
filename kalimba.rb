@@ -493,6 +493,7 @@ module Kalimba::Views
           self << "#{article.top_comment_points} points by "
           a article.top_comment_author, :href => R(HackerNews, "user?id=#{article.top_comment_author}")
         end
+        br
         div { article.top_comment_content }
       end
     end

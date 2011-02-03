@@ -486,6 +486,7 @@ module Kalimba::Views
     end
     hr
     _content preview
+    div :style => 'clear: both;' {}
     hr
     if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
       div do

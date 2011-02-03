@@ -11,6 +11,24 @@ Camping.goes :Kalimba
 
 CONFIG = YAML.load(File.read('config/app.yml'))
 
+module Kalimba
+  def r404 path
+    @code = 404
+    @message = "Page Not Found"
+    render :error
+  end
+  def r500 klass, method, exception
+    @code = 500
+    @message = "An Unexpected Error Has Occurred"
+    render :error
+  end
+  def r501 method
+    @code = 501
+    @message = "#{method.capitalize} Isn't Supported"
+    render :error
+  end
+end
+
 module Kalimba::Models
   class Article < Base
     def self.normalize_url link
@@ -266,6 +284,7 @@ module Kalimba::Controllers
   class Css < R "#{CONFIG[:css_root]}/(.*)"; end
   class HackerNews < R "#{CONFIG[:hn_root]}/(.*)"; end
   class GoogleApi < R "#{CONFIG[:google_api]}/(.*)"; end
+  class GoogleFonts < R "http://fonts.googleapis.com/css"; end
 end
 
 module Kalimba::Views
@@ -276,6 +295,7 @@ module Kalimba::Views
         link :href => '/static/css/reset.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => '/static/css/main.css', :type => 'text/css', :rel => 'stylesheet'
         link :href => R(Css, 'facebox.css'), :type => 'text/css', :rel => 'stylesheet'
+        link :href => R(GoogleFonts, :family => 'Tangerine'), :type => 'text/css', :rel => 'stylesheet'
         link :rel => 'canonical', :href => CONFIG[:canonical_url]
         link :rel => 'icon', :href => R(Image, 'favicon.ico'), :type => 'image/x-icon'
         link :rel => 'image_src', :href => 'http://static.embed.ly/images/logos/embedly-powered-large-light.png'
@@ -305,7 +325,7 @@ module Kalimba::Views
       body do
         div.header do
           div.title do
-            self << "KALIMBA - #{CONFIG[:tagline]}"
+            a.home "KALIMBA - #{CONFIG[:tagline]}", :href => CONFIG[:canonical_url]
             a.rss_link :href => (CONFIG[:rss] or R(Rss)) do
               img.rss :src => R(Image, 'feed-icon32x32.png'), :alt => 'rss'
             end
@@ -313,6 +333,20 @@ module Kalimba::Views
         end
         div.main do
           self << yield
+          div.clear {}
+          div.footer do
+            a 'About', :href => 'http://news.ycombinator.com/item?id=2152950'
+            self << ' | '
+            a 'Hacker News', :href => 'http://news.ycombinator.com'
+            self << ' | '
+            a 'Embedly', :href => 'http://embed.ly'
+            self << ' | '
+            a 'Feedback', :href => "mailto:#{CONFIG[:author_email]}"
+            self << ' | '
+            a '@doki_pen', :href => 'http://twitter.com/doki_pen'
+            self << ' | '
+            a 'Shortcuts', :name => 'keys'
+          end
         end
       end
     end
@@ -364,20 +398,6 @@ module Kalimba::Views
     div.like {CONFIG[:fblike_fragment]}
     div.clear {}
     div.shr {}
-    div.clear {}
-    div.footer do
-      a 'About', :href => 'http://news.ycombinator.com/item?id=2152950'
-      self << ' | '
-      a 'Hacker News', :href => 'http://news.ycombinator.com'
-      self << ' | '
-      a 'Embedly', :href => 'http://embed.ly'
-      self << ' | '
-      a 'Feedback', :href => "mailto:#{CONFIG[:author_email]}"
-      self << ' | '
-      a '@doki_pen', :href => 'http://twitter.com/doki_pen'
-      self << ' | '
-      a 'Shortcuts', :name => 'keys'
-    end
 
     div.shortcuts! do
       h2 'Keyboard Shortcuts'
@@ -544,6 +564,16 @@ module Kalimba::Views
             end
           end
         end
+      end
+    end
+  end
+
+  def error
+    div.error do
+      center do
+        h1 "We're Sorry"
+        img :src => R(Image, 'kalimba-piano.jpg'), :alt => 'not found'
+        h1 "#{@code} - #{@message}"
       end
     end
   end

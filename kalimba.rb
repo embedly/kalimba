@@ -458,7 +458,7 @@ module Kalimba::Views
       end
     end
     div.clear {}
-    div.provider do
+    div.provider :style => 'float: right;' do
       self << 'via '
       if preview.favicon_url
         img.provider_favicon :src => preview.favicon_url, :alt => 'favicon'

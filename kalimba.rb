@@ -293,7 +293,7 @@ module Kalimba::Views
         script(:type => 'text/javascript', :src => R(KeysJs)) {}
 
         if CONFIG[:shareaholic_key]
-          script(:type => 'text/javascript', :src => R(SharaholicJs)) {}
+          script(:type => 'text/javascript', :src => R(ShareaholicJs)) {}
           script(:type => 'text/javascript', :src => CONFIG[:shareaholic_plugin]) {}
         end
 

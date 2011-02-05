@@ -441,53 +441,60 @@ module Kalimba::Views
   end
 
   def _content preview
-    case preview.type
-    when 'image'
-      a.embedly_thumbnail(:href => preview.original_url) do
-        img.thumbnail :src => preview.url, :alt => 'goto article'
-      end
-    when 'video'
-      video.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
-    when 'audio'
-      audio.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
-    else
-      if preview.content
-        div.embedly_content do
-          p { preview.content }
+    begin
+      case preview.type
+      when 'image'
+        a.embedly_thumbnail(:href => preview.original_url) do
+          img.thumbnail :src => preview.url, :alt => 'goto article'
         end
+      when 'video'
+        video.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
+      when 'audio'
+        audio.embedly_video :src => preview.url, :controls => "controls", :preload => "preload"
       else
-        case preview.object.type
-        when 'photo'
+        if preview.content
           div.embedly_content do
-            a.embedly_thumbnail :href => preview.original_url do
-              img.thumbnail :src => preview.object_url, :alt => 'goto article'
-            end
+            p { preview.content }
           end
-        when 'video', 'rich'
-          div.embedly_content { preview.object['html'] }
         else
-          div.embedly_content do
-            if preview.images.length != 0
-              a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do
-                img.thumbnail :src => preview.images.first['url'], :alt => 'thumbnail'
+          case preview.object.type
+          when 'photo'
+            div.embedly_content do
+              a.embedly_thumbnail :href => preview.original_url do
+                img.thumbnail :src => preview.object_url, :alt => 'goto article'
               end
             end
+          when 'video'
+            div.embedly_content { preview.object.html }
+          when 'rich'
+            div.embedly_content { preview.html }
+          else
+            div.embedly_content do
+              if preview.images.length != 0
+                a.embedly_thumbnail_small :target => '_blank', :href => preview.original_url, :title => preview.url do
+                  img.thumbnail :src => preview.images.first['url'], :alt => 'thumbnail'
+                end
+              end
 
-            p { preview.description }
+              p { preview.description }
 
-            div { preview.embeds.first['html'] if preview.embeds.length > 0 }
+              div { preview.embeds.first['html'] if preview.embeds.length > 0 }
+            end
           end
         end
       end
-    end
-    div.clear {}
-    div.provider :style => 'float: right;' do
-      self << 'via '
-      if preview.favicon_url
-        img.provider_favicon :src => preview.favicon_url, :alt => 'favicon'
-        self << ' '
+      div.clear {}
+      div.provider :style => 'float: right;' do
+        self << 'via '
+        if preview.favicon_url
+          img.provider_favicon :src => preview.favicon_url, :alt => 'favicon'
+          self << ' '
+        end
+        a.provider_link preview.provider_name, :href => preview.provider_url
       end
-      a.provider_link preview.provider_name, :href => preview.provider_url
+    rescue
+      div.embedly_content { 'ERROR' }
+      div.clear {}
     end
   end
 

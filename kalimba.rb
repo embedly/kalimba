@@ -151,6 +151,18 @@ module Kalimba::Models
       drop_table Update.table_name
     end
   end
+
+  class RemoveTopCommentPoints < V 0.5
+    def self.up
+      remove_column Article.table_name, :top_comment_points
+    end
+
+    def self.down
+      change_table Article.table_name do |t|
+        t.integer :top_comment_points
+      end
+    end
+  end
 end
 
 module Kalimba::Controllers
@@ -205,7 +217,6 @@ module Kalimba::Controllers
             doc = Hpricot(open(a[:comments]))
             top_comment = doc.at('.default')
             if top_comment
-              a[:top_comment_points] = top_comment.at('.comhead/span').inner_html[/\d+/]
               a[:top_comment_author] = top_comment.at('.comhead/a').inner_html.strip
               content = []
               node = top_comment.at('.comment')
@@ -217,6 +228,7 @@ module Kalimba::Controllers
               a[:top_comment_content] = content.join
             end
           rescue
+            puts $!
             puts "Failed to parse #{a[:comments]}"
           end
         end
@@ -385,7 +397,7 @@ module Kalimba::Views
                 end
                 div.top_comment do
                   div.comment_head do
-                    self << "#{article.top_comment_points} points by "
+                    self << "by "
                     a.top_comment_author article.top_comment_author,
                       :href => R(HackerNews, "user", :id=> article.top_comment_author)
                   end
@@ -521,7 +533,7 @@ module Kalimba::Views
     if CONFIG[:tagline] and article.comment_count and article.comment_count > 0
       div do
         div do
-          self << "#{article.top_comment_points} points by "
+          self << "by "
           a article.top_comment_author, :href => R(HackerNews, "user", :id => article.top_comment_author)
         end
         br

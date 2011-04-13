@@ -1,0 +1,14 @@
+Just in case someone decides to try this out:
+
+Edit config/app.yml
+
+To run::
+    
+    rackup config.ru
+
+
+View on http://localhost:9292
+To update from hacker news http://localhost:9292/update
+
+MIT Licensed - Embedly, Inc 2011 
+see MIT-LICENSE for details

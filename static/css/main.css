@@ -16,10 +16,9 @@ body, select, input, textarea {
 .header {
   background: black;
   color: white;
-  width: auto;
   padding: 0px 30px;
   font-family: "Lucida Grande", "Trebuchet MS", Trebuchet, Helvetica, Arial, sans-serif;
-  margin: 0px 30px; }
+  margin: 0px 5%; }
   .header .title {
     background: transparent url("http://static.embed.ly/images/kalimba/orange-logo.png") no-repeat center left;
     padding: 11px;
@@ -68,15 +67,14 @@ div.error {
     display: inline; }
 
 .main {
-  line-height: 14px;
-  font-size: 11px;
+  line-height: 18px;
+  font-size: 13px;
   font-family: "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif;
   background: #f6f6ef;
   margin-left: auto;
   margin-right: auto;
-  width: auto;
   padding: 30px;
-  margin: 0px 30px; }
+  margin: 0px 5%; }
   .main .footer {
     margin-top: 30px;
     width: 100%;

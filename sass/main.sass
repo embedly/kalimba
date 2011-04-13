@@ -6,7 +6,7 @@ $link-color: #000000
 $content-link-color: #000055
 $embedly-background-color: #ffffff
 $hn-color: #f60
-$main-width: 700px
+$main-width: auto
 
 =radius($r)
   :border-radius $r
@@ -39,10 +39,7 @@ body, select, input, textarea
   :width $main-width
   :padding 0px 30px
   :font-family 'Lucida Grande', 'Trebuchet MS', Trebuchet, Helvetica, Arial, sans-serif
-  :margin
-    :left auto
-    :right auto
-    :top 10px
+  :margin 0px 30px
   .title
     :background transparent url('http://static.embed.ly/images/kalimba/orange-logo.png') no-repeat center left
     :padding 11px
@@ -99,6 +96,7 @@ div.error
     :right auto
   :width $main-width
   :padding 30px
+  :margin 0px 30px
 
   .footer
     :margin-top 30px
@@ -116,6 +114,9 @@ div.error
     :color $link-color
     :text-decoration none
     :font-weight bold
+  
+  li.article
+    :position relative
 
   a.article_link
     :font-size 14pt
@@ -127,14 +128,17 @@ div.error
     :padding 24px 10px
     :text-align right
     :vertical-align top
+    :position absolute
+    :left 0
+    :top 0
 
   div.selected
     :color $hn-color
 
   div.article_content
-    :float left
     :margin-bottom 30px
-    :width 500px
+    :margin-left 80px
+    :margin-right 80px
 
   div.article_meta
     :text-align right

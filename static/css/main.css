@@ -16,12 +16,10 @@ body, select, input, textarea {
 .header {
   background: black;
   color: white;
-  width: 700px;
+  width: auto;
   padding: 0px 30px;
   font-family: "Lucida Grande", "Trebuchet MS", Trebuchet, Helvetica, Arial, sans-serif;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 10px; }
+  margin: 0px 30px; }
   .header .title {
     background: transparent url("http://static.embed.ly/images/kalimba/orange-logo.png") no-repeat center left;
     padding: 11px;
@@ -76,8 +74,9 @@ div.error {
   background: #f6f6ef;
   margin-left: auto;
   margin-right: auto;
-  width: 700px;
-  padding: 30px; }
+  width: auto;
+  padding: 30px;
+  margin: 0px 30px; }
   .main .footer {
     margin-top: 30px;
     width: 100%;
@@ -92,6 +91,8 @@ div.error {
     color: black;
     text-decoration: none;
     font-weight: bold; }
+  .main li.article {
+    position: relative; }
   .main a.article_link {
     font-size: 14pt; }
   .main div.article_rank {
@@ -100,13 +101,16 @@ div.error {
     float: left;
     padding: 24px 10px;
     text-align: right;
-    vertical-align: top; }
+    vertical-align: top;
+    position: absolute;
+    left: 0;
+    top: 0; }
   .main div.selected {
     color: #ff6600; }
   .main div.article_content {
-    float: left;
     margin-bottom: 30px;
-    width: 500px; }
+    margin-left: 80px;
+    margin-right: 80px; }
   .main div.article_meta {
     text-align: right;
     padding-right: 20px; }

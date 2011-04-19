@@ -11,6 +11,8 @@ module Kalimba
     render :error
   end
   def r500 klass, method, exception
+    puts exception.inspect
+    puts exception.backtrace
     @code = 500
     @message = "An Unexpected Error Has Occurred"
     render :error

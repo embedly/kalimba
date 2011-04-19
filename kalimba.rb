@@ -165,6 +165,16 @@ module Kalimba::Models
       end
     end
   end
+
+  class WidenTopCommentAuthor < V 0.6
+    def self.up
+      change_column Article.table_name, "top_comment_author", :text
+    end
+
+    def self.down
+      change_column Article.table_name, "top_comment_author", :string
+    end
+  end
 end
 
 module Kalimba::Controllers

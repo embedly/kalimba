@@ -175,6 +175,16 @@ module Kalimba::Models
       change_column Article.table_name, "top_comment_author", :string
     end
   end
+
+  class WidenLink < V 0.7
+    def self.up
+      change_column Article.table_name, "link", :text
+    end
+
+    def self.down
+      change_column Article.table_name, "link", :string
+    end
+  end
 end
 
 module Kalimba::Controllers

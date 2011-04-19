@@ -212,9 +212,9 @@ module Kalimba::Controllers
           }
         rescue
           # TODO something?
-          puts $!
-          puts $!.stacktrace
           puts "Failed to parse article"
+          puts $!.inspect
+          puts $!.backtrace
         end
       end
 
@@ -235,9 +235,10 @@ module Kalimba::Controllers
               a[:top_comment_content] = content.join
             end
           rescue
-            puts $!
-            puts $!.stacktrace
+            # TODO something?
             puts "Failed to parse #{a[:comments]}"
+            puts $!.inspect
+            puts $!.backtrace
           end
         end
       end

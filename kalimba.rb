@@ -1,4 +1,4 @@
-%w{camping embedly open-uri hpricot json digest/sha1 ostruct sass yaml builder}.each {|r| require r}
+%w{camping embedly open-uri nokogiri json digest/sha1 ostruct sass yaml builder}.each {|r| require r}
 
 Camping.goes :Kalimba
 
@@ -197,38 +197,46 @@ module Kalimba::Controllers
       end
 
       articles = []
-      doc = Hpricot(open(CONFIG[:hn_root]))
-      (doc/'.subtext/..').each do |subtext|
-        article = subtext.previous_node
-        articles << {
-          :rank => article.at('.title').inner_html.strip,
-          :title => article.at('.title/a').inner_html.strip,
-          :link => article.at('.title/a')[:href],
-          :comments => Article.normalize_url(subtext.at('a:last')[:href]),
-          :comment_count => subtext.at('a:last').inner_html[/\d+/].to_i,
-          :author => subtext.at('a').inner_html.strip,
-          :points => subtext.at('span').inner_html[/\d+/].to_i
-        }
+      doc = Nokogiri::HTML(open(CONFIG[:hn_root]))
+      doc.css('.subtext').xpath('..').each do |subtext|
+        article = subtext.previous
+        begin
+          articles << {
+            :rank => article.at_css('.title').inner_html.strip,
+            :title => article.at_css('.title/a').inner_html.strip,
+            :link => article.at_css('.title/a')[:href],
+            :comments => Article.normalize_url(subtext.at_css('a:last')[:href]),
+            :comment_count => subtext.at_css('a:last').inner_html[/\d+/].to_i,
+            :author => subtext.at_css('a').inner_html.strip,
+            :points => subtext.at_css('span').inner_html[/\d+/].to_i
+          }
+        rescue
+          # TODO something?
+          puts $!
+          puts $!.stacktrace
+          puts "Failed to parse article"
+        end
       end
 
       if CONFIG[:top_comment]
         articles.each do |a|
           begin
-            doc = Hpricot(open(a[:comments]))
-            top_comment = doc.at('.default')
+            doc = Nokogiri::HTML(open(a[:comments]))
+            top_comment = doc.at_css('.default')
             if top_comment
-              a[:top_comment_author] = top_comment.at('.comhead/a').inner_html.strip
+              a[:top_comment_author] = top_comment.at_css('.comhead/a').inner_html.strip
               content = []
-              node = top_comment.at('.comment')
+              node = top_comment.at_css('.comment')
               # we are intentionally skipping the last node (reply node)
-              while node.next_node
+              while node.next
                 content << node.to_s
-                node = node.next_node
+                node = node.next
               end
               a[:top_comment_content] = content.join
             end
           rescue
             puts $!
+            puts $!.stacktrace
             puts "Failed to parse #{a[:comments]}"
           end
         end

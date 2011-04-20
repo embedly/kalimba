@@ -219,7 +219,7 @@ module Kalimba::Controllers
       end
 
       articles = []
-      doc = Nokogiri::HTML(open(CONFIG[:hn_root]))
+      doc = Nokogiri::HTML(open(CONFIG[:hn_root]), CONFIG[:hn_root], 'UTF-8')
       doc.css('.subtext').xpath('..').each do |subtext|
         article = subtext.previous
         begin
@@ -410,7 +410,7 @@ module Kalimba::Views
             else
               div.embedly do
                 div.embedly_title do
-                  a.article_link article.title, :href => article.link, :target => '_blank'
+                  a.article_link(:href => article.link, :target => '_blank') {article.title}
                 end
               end
             end
@@ -544,7 +544,7 @@ module Kalimba::Views
   def _embed article, preview
     div.embedly do
       div.embedly_title do
-        a article.title, :target => '_blank', :href => preview.original_url, :title => preview.url
+        a(:target => '_blank', :href => preview.original_url, :title => preview.url) {article.title}
       end
       _content preview
     end

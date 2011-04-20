@@ -23,3 +23,4 @@ Kalimba.create
 # start
 use Rack::Static, :urls => ["/static"]
 run Kalimba
+

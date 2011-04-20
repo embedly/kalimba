@@ -4,3 +4,5 @@ embedly
 nokogiri
 haml
 json
+activemodel
+activerecord

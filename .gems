@@ -1,5 +1,6 @@
 builder <3.0
-camping-omnibus
+camping
+markaby
 embedly
 nokogiri
 haml

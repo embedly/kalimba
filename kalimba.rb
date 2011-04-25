@@ -508,7 +508,7 @@ module Kalimba::Views
             p { preview.content }
           end
         else
-          case preview.object['type']
+          case preview.object.type
           when 'photo'
             div.embedly_content do
               a.embedly_thumbnail :href => preview.original_url do
@@ -516,7 +516,7 @@ module Kalimba::Views
               end
             end
           when 'video'
-            div.embedly_content { preview.object['html'] }
+            div.embedly_content { preview.object.html }
           when 'rich'
             div.embedly_content { preview.html }
           else
@@ -544,8 +544,6 @@ module Kalimba::Views
         a.provider_link preview.provider_name, :href => preview.provider_url
       end
     rescue
-      puts $!
-      puts $!.backtrace
       div.embedly_content { 'ERROR' }
       div.clear {}
     end

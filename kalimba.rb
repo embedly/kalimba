@@ -544,6 +544,8 @@ module Kalimba::Views
         a.provider_link preview.provider_name, :href => preview.provider_url
       end
     rescue
+      puts $!
+      puts $!.backtrace
       div.embedly_content { 'ERROR' }
       div.clear {}
     end

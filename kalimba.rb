@@ -317,7 +317,7 @@ module Kalimba::Controllers
       @articles = []
       Article::find(:all, :order => 'id').each do |a|
         preview_row = Preview.find_preview(Article.normalize_url(a.link))
-        preview = OpenStruct.new(JSON.parse(preview_row.value)) if preview_row
+        preview = ::Embedly::EmbedlyObject.new(JSON.parse(preview_row.value)) if preview_row
         @articles << [a, preview_row, preview]
       end
 

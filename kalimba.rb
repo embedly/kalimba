@@ -295,6 +295,13 @@ module Kalimba::Controllers
     end
   end
 
+  class ImagesJs < R "/media/js/images.js"
+    def get
+      @headers['Content-Type'] = 'text/javascript'
+      render :_images_js
+    end
+  end
+
   class AnalyticsJs < R "/media/js/analytics.js"
     def get
       @headers['Content-Type'] = 'text/javascript'
@@ -364,6 +371,7 @@ module Kalimba::Views
         if CONFIG[:google_analytics_key]
           script(:type => 'text/javascript', :src => R(AnalyticsJs)) {}
         end
+        script(:type => 'text/javascript', :src => R(ImagesJs)) {}
       end
 
       body do
@@ -631,6 +639,16 @@ module Kalimba::Views
         h1 "#{@code} - #{@message}"
       end
     end
+  end
+
+  def _images_js
+    self <<<<-"END"
+jQuery(document).ready(function($) {
+  $('img').error(function() {
+    this.style.display='none'
+  })
+})
+    END
   end
 
   def _keys_js

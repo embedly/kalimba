@@ -32,6 +32,12 @@ body, select, input, textarea {
       float: right;
       position: relative;
       top: -3px; }
+    .header .title #help_icon {
+      position: fixed;
+      bottom: 5px;
+      right: 60px; }
+      .header .title #help_icon img {
+        width: 24px; }
 
 div.error {
   margin-left: auto;
@@ -67,7 +73,7 @@ div.error {
     display: inline; }
 
 .main {
-  line-height: 18px;
+  line-height: 19px;
   font-size: 13px;
   font-family: "Droid Sans", "Lucinda Grande", Helvetica, Arial, sans-serif;
   background: #f6f6ef;

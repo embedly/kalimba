@@ -358,7 +358,7 @@ module Kalimba::Views
         meta :name => 'description', :content => CONFIG[:tagline]
         meta :name => 'author', :content => 'Embed.ly, Inc.'
         meta :name => 'keywords', :content => 'Hacker News, embedly, embed, news, hacker, ycombinator'
-        script(:type => 'text/javascript', :src => R(GoogleApi, 'jquery/1.4.4/jquery.min.js')) {}
+        script(:type => 'text/javascript', :src => R(GoogleApi, 'jquery/1.5.1/jquery.min.js')) {}
         script(:type => 'text/javascript', :src => R(GoogleApi, 'jqueryui/1.8.9/jquery-ui.min.js')) {}
         script(:type => 'text/javascript', :src => R(Javascript, 'facebox.js')) {}
         script(:type => 'text/javascript', :src => R(KeysJs)) {}
@@ -378,6 +378,9 @@ module Kalimba::Views
         div.header do
           div.title do
             a.home "KALIMBA - #{CONFIG[:tagline]}", :href => CONFIG[:canonical_url]
+            a.keyboard_link.open_help.help_icon! do
+              img.rss :src => R(Image, 'keyboard.png'), :alt => 'keys'
+            end
             a.rss_link :href => (CONFIG[:rss] or R(Rss)) do
               img.rss :src => R(Image, 'feed-icon32x32.png'), :alt => 'rss'
             end
@@ -678,7 +681,7 @@ jQuery(document).ready(function($) {
   }
 
   State.prototype.current = function() {
-    return $('a[name='+(this.index+1)+']').parent();
+    return $($('.article')[this.index])
   }
 
   State.prototype.inRange = function() {
@@ -689,14 +692,14 @@ jQuery(document).ready(function($) {
     if (this.index > 0) {
       this.index--;
       this.index %= this.max;
-      this.highlight();
+      this.highlight(true);
     }
   }
   State.prototype.down = function() {
     if (this.index < this.max - 1) {
       this.index++;
       this.index %= this.max;
-      this.highlight();
+      this.highlight(true);
     }
   }
   State.prototype.toggle_content = function() {
@@ -724,11 +727,13 @@ jQuery(document).ready(function($) {
       }
     }
   }
-  State.prototype.highlight = function() {
+  State.prototype.highlight = function(goto_rank) {
     $('.article_rank').removeClass('selected');
     if (this.inRange()) {
-      state.current().find('.article_rank').addClass('selected');
-      document.location.href = '#'+(this.index+1);
+      state.current().find('div.article_rank').addClass('selected');
+      if (goto_rank) {
+        document.location.href = '#'+(this.index+1);
+      }
     }
   }
   State.prototype.help = function() {
@@ -768,13 +773,36 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $(document).scroll(function() {
+    var top = $(document).scrollTop()
+      , current = null
+      , ranks = $('div.article_rank')
+    for (var i in $.makeArray(ranks)) {
+      var r = $(ranks[i])
+      if (r.offset().top >= top) {
+        current = i
+        break
+      }
+    }
+
+    if (current != state.index) {
+      state.index = current;
+      state.highlight()
+    }
+  })
+
+  $('.open_help').click(function() {state.help()})
+
   $('a[name=keys]').click(function() {
     state.help();
   });
 
   if (document.location.hash) {
     state.index = document.location.hash.substring(1) - 1;
-    state.highlight();
+    state.highlight(true);
+  } else {
+    state.index = 0
+    state.highlight()
   }
 });
     END

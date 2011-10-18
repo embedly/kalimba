@@ -267,9 +267,11 @@ module Kalimba::Controllers
 
       urls = articles.collect {|a| Article.normalize_url(a[:link])}.reject {|a| Preview.key_exists? a}
       if urls.size > 0
-        api = ::Embedly::API.new :key => CONFIG[:embedly_key], :user_agent => 'Mozilla/5.0 (compatible; Kalimba/0.1;)'
-        api.preview(:urls => urls, :maxwidth => 200).each_with_index do |preview, i|
-          Preview.save_preview urls[i], preview
+        [urls[0..14], urls[15..-1]].each do |u|
+          api = ::Embedly::API.new :key => CONFIG[:embedly_key], :user_agent => 'Mozilla/5.0 (compatible; Kalimba/0.1;)'
+          api.preview(:urls => u, :maxwidth => 200).each_with_index do |preview, i|
+            Preview.save_preview urls[i], preview
+          end
         end
       end
 

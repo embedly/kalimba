@@ -28,7 +28,7 @@ module Kalimba::Models
   class Article < Base
     def self.normalize_url link
       if link !~ /^http/
-        "#{CONFIG[:hn_root]}/#{link}"
+        "#{CONFIG[:hn_root]}#{link}"
       else
         link
       end
@@ -270,7 +270,11 @@ module Kalimba::Controllers
         [urls[0..14], urls[15..-1]].each do |u|
           api = ::Embedly::API.new :key => CONFIG[:embedly_key], :user_agent => 'Mozilla/5.0 (compatible; Kalimba/0.1;)'
           api.preview(:urls => u, :maxwidth => 200).each_with_index do |preview, i|
-            Preview.save_preview urls[i], preview
+            begin
+              Preview.save_preview urls[i], preview
+            rescue
+              puts "Failed to save #{urls[i]}"
+            end
           end
         end
       end

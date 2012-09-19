@@ -16,6 +16,6 @@
 :css_root: 'http://static.embed.ly/css/kalimba'
 :tagline: "Embedly Colored Glasses for Hacker News"
 :top_comment: true
-:hn_root: 'http://news.ycombinator.com'
+:hn_root: 'http://news.ycombinator.com/'
 :shareaholic_plugin: 'http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-api.min.js'
 :google_api: 'http://ajax.googleapis.com/ajax/libs'
